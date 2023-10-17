@@ -1,7 +1,27 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 
+interface User extends UserImage {
+  username: string;
+  email: string;
+  password: string;
+  bio: string;
+  member_since: Date;
+}
+
+interface UserImage {
+  userImage?: string;
+}
+
 function SignUp() {
   const [selectedFile, setSelectedFile] = useState<File | string>("");
+  const [newUser, setNewUser] = useState<User>({
+    username: "",
+    email: "",
+    password: "",
+    userImage: "",
+    bio: "",
+    member_since: new Date(),
+  });
 
   const handleFileInput = (e: ChangeEvent<HTMLInputElement>) => {
     setSelectedFile(e.target.files?.[0] || "");
@@ -23,7 +43,10 @@ function SignUp() {
         "http://localhost:5005/api/users/imageUpload",
         requestOptions
       );
-      const results = await response.json();
+      const result = (await response.json()) as UserImage;
+
+      //Get url from profile picture
+      setNewUser({ ...newUser, userImage: result.userImage });
     } catch (error) {
       console.log("error :>> ", error);
     }
@@ -36,6 +59,11 @@ function SignUp() {
           <button type="submit">upload</button>
         </form>
       </div>
+      {newUser.userImage && (
+        <div>
+          <img src={newUser.userImage} alt="user-avatar-photo" />
+        </div>
+      )}
     </>
   );
 }
