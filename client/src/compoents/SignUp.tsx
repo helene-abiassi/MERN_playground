@@ -1,6 +1,6 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
-interface User extends UserImage {
+export interface User extends UserImage {
   username: string;
   email: string;
   password: string;
@@ -8,12 +8,11 @@ interface User extends UserImage {
   member_since: Date;
 }
 
-interface UserImage {
+export interface UserImage {
   userImage: string;
 }
 
 function Signup() {
-  const [selectedFile, setSelectedFile] = useState<File | string>("");
   const [newUser, setNewUser] = useState<User>({
     username: "",
     email: "",
@@ -22,35 +21,6 @@ function Signup() {
     bio: "",
     member_since: new Date(),
   });
-
-  const handleFileInput = (e: ChangeEvent<HTMLInputElement>) => {
-    setSelectedFile(e.target.files?.[0] || "");
-  };
-
-  const handleFileSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const formdata = new FormData();
-    formdata.append("userImage", selectedFile);
-
-    const requestOptions = {
-      method: "POST",
-      body: formdata,
-    };
-
-    try {
-      const response = await fetch(
-        "http://localhost:5005/api/users/imageUpload",
-        requestOptions
-      );
-      const result = (await response.json()) as UserImage;
-
-      //Get url from profile picture
-      setNewUser({ ...newUser, userImage: result.userImage });
-    } catch (error) {
-      console.log("error :>> ", error);
-    }
-  };
 
   const handleRegisterInput = (e: ChangeEvent<HTMLInputElement>) => {
     console.log("e.target.name :>> ", e.target.name);
@@ -86,6 +56,12 @@ function Signup() {
     }
   };
 
+  useEffect(() => {
+    setNewUser(newUser);
+  }, []);
+
+  // <Navigate to={"/profile"} />
+  //! use Navigate hook to redirect user to profile page after signin (with delay)
 
   return (
     <>
@@ -104,12 +80,12 @@ function Signup() {
           <button type="submit">sign up</button>
         </form>
       </div>
-      <div>
+      {/* <div>
         <form onSubmit={handleFileSubmit}>
           <input name="userImage" type="file" onChange={handleFileInput} />
           <button type="submit">upload</button>
         </form>
-      </div>
+      </div> */}
       {/* {newUser.userImage && (
         <div>
           <img src={newUser.userImage} alt="user-avatar-photo" />
