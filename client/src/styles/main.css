@@ -22,7 +22,7 @@
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
-  padding-top: 1rem;
+  padding-top: 2rem;
   font-weight: 600;
 }
 
@@ -56,7 +56,7 @@ nav {
 }
 
 .mainLogo {
-  height: 4rem;
+  height: 3.5rem;
 }
 
 .mainLogo:hover {
