@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
 
 function NavBar() {
-  const [user, setUser] = useState(false);
+  const [user, setUser] = useState(true);
 
   console.log("setUser :>> ", setUser);
 
@@ -9,29 +10,31 @@ function NavBar() {
     <>
       <nav>
         <div className="navLeft">
-          <img
-            className="mainLogo"
-            src="https://res.cloudinary.com/dfm1r4ikr/image/upload/v1697317643/voyageApp/logo-variations-02_uffxcy.png"
-            alt="voyage-logo"
-          />
+          <NavLink to="/">
+            <img
+              className="mainLogo"
+              src="https://res.cloudinary.com/dfm1r4ikr/image/upload/v1697317643/voyageApp/logo-variations-02_uffxcy.png"
+              alt="voyage-logo"
+            />
+          </NavLink>
         </div>
         <div className="navMiddle">
-          <a href="/experiences">experiences</a>
+          <NavLink to="/experiences">experiences</NavLink>
           <span> | </span>
-          <a href="/map">map</a>
+          <NavLink to="/map">map</NavLink>
           <span> | </span>
-          <a href="/about">about</a>
+          <NavLink to="/about">about</NavLink>
           <span> | </span>
         </div>
 
         <div className="navRight">
           {user ? (
-            <a href="profile">Profile</a>
+            <NavLink to="/profile">profile</NavLink>
           ) : (
             <>
-              <a href="/login">login</a>
+              <NavLink to="/login">login</NavLink>
               <span> | </span>
-              <a href="/signup">sign up</a>
+              <NavLink to="/signup">sign up</NavLink>
             </>
           )}
         </div>
