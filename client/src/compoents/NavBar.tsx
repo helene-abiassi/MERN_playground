@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 function NavBar() {
-  const [user, setUser] = useState(true);
+  const [user, setUser] = useState(false);
 
   console.log("setUser :>> ", setUser);
 
