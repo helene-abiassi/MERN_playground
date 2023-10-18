@@ -33,8 +33,6 @@ function App() {
           <Route path="all" element={<Experiences />} />
           <Route path="hiking" element={<Hiking />} />
           <Route path="wildlife" element={<Wildlife />} />
-          //! Do the same for all adventure types + make sure they're different,
-          //!since it s a one-option category (not checkbox)
         </Route>
         <Route
           path="experiences/:experienceTitle"
