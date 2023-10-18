@@ -1,9 +1,7 @@
-import Footer from "../compoents/Footer";
-
 function Home() {
   return (
     <div>
-      <Footer />
+      <h1>explore. discover. share.</h1>
     </div>
   );
 }
