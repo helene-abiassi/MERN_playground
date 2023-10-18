@@ -17,23 +17,41 @@ import Experiences from "./views/Experiences";
 import Map from "./views/Map";
 import ErrorPage from "./views/ErrorPage";
 import ExperienceDetails from "./views/ExperienceDetails";
+import Wildlife from "./views/ExperienceTypes/Wildlife";
+import Hiking from "./views/ExperienceTypes/Hiking";
+import ExpLayout from "./components/ExpLayout";
+import Profile from "./views/Profile";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
         <Route index element={<Home />} />
-        <Route path="experiences" element={<Experiences />} />
+        <Route path="experiences" element={<ExpLayout />}>
+          <Route index element={<Experiences />} />
+          <Route path="all" element={<Experiences />} />
+          <Route path="hiking" element={<Hiking />} />
+          <Route path="wildlife" element={<Wildlife />} />
+          //! Do the same for all adventure types + make sure they're different,
+          //!since it s a one-option category (not checkbox)
+        </Route>
         <Route
           path="experiences/:experienceTitle"
           element={<ExperienceDetails />}
         />
-        <Route path="experiences/:type" element={<Experiences />} />
-        //!Fix this to be connected to my array expTypes
         <Route path="map" element={<Map />} />
         <Route path="about" element={<About />} />
         <Route path="signup" element={<SignUp />} />
         <Route path="login" element={<LogIn />} />
+        <Route
+          path="profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
       </Route>
     )
   );
