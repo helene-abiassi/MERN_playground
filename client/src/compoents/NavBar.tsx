@@ -19,7 +19,7 @@ function NavBar() {
           </NavLink>
         </div>
         <div className="navMiddle">
-          <NavLink to="/experiences">experiences</NavLink>
+          <NavLink to="/experiences/all">experiences</NavLink>
           <span> | </span>
           <NavLink to="/map">map</NavLink>
           <span> | </span>
