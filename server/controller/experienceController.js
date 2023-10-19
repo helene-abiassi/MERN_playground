@@ -22,7 +22,6 @@ const getAllExperiences = async (req, res) => {
   });
 };
 
-
 const getExperiencesByType = async (req, res) => {
 
   const { experienceType } = req.params;
