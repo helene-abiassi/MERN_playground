@@ -4,6 +4,7 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
+    default: "user",
   },
   email: {
     type: String,
@@ -14,30 +15,30 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  photo: {
+  user_image: {
     type: String,
     default:
-      "https://res.cloudinary.com/dfm1r4ikr/image/upload/v1697306522/voyageApp/profilephoto_bobolechien_bkun9g.png",
+      "https://res.cloudinary.com/dfm1r4ikr/image/upload/v1697397728/voyageApp/userPhoto.png",
   },
   bio: {
     type: String,
+    default: "No bio added yet",
   },
   member_since: {
     type: Date,
+    default: Date.now,
+    required: true,
   },
   bookmarks: [
     {
-      type: [{ type: mongoose.Schema.Types.ObjectId }],
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "experience",
     },
   ],
   submissions: [
     {
-      type: [{ type: mongoose.Schema.Types.ObjectId }],
-    },
-  ],
-  comments: [
-    {
-      type: [{ type: mongoose.Schema.Types.ObjectId }],
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "experience",
     },
   ],
 });
