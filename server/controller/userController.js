@@ -23,6 +23,35 @@ const getAllUsers = async (req, res) => {
   });
 };
 
+const getUserById = async (req, res) => {
+  const id = req.params._id;
+
+  try {
+    const userByID = await userModel.find({
+      _id: id,
+    });
+    console.log("userByID :>> ", userByID);
+
+    if (userByID.length > 0) {
+      res.status(200).json({
+        number: userByID.length,
+        data: userByID,
+      });
+    } else {
+      res.status(200).json({
+        number: userByID.length,
+        errorMessage: "OH NO! No such user with this id exists",
+      });
+    }
+  } catch (error) {
+    console.log("expType error :>> ", error);
+    res.status(500).json({
+      errorMessage: "something went wrong in the request",
+      error,
+    });
+  }
+};
+
 const uploadImage = async (req, res) => {
   console.log(req.file);
 
@@ -58,7 +87,6 @@ const signUp = async (req, res) => {
 
   try {
     const hashedPassword = await hashPassword(req.body.password);
-    console.log("hashedPassword :>> ", hashedPassword);
 
     if (hashedPassword) {
       // check if user already exists
@@ -106,4 +134,4 @@ const signUp = async (req, res) => {
   }
 };
 
-export { uploadImage, signUp, getAllUsers };
+export { uploadImage, signUp, getAllUsers, getUserById };
