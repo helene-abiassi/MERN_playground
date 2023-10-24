@@ -2,9 +2,8 @@ import mongoose from "mongoose";
 
 const experienceSchema = new mongoose.Schema({
   author: {
-    type: [{ type: mongoose.Schema.Types.ObjectId }],
-    required: true,
-    unique: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
   },
   title: {
     type: String,
@@ -15,7 +14,7 @@ const experienceSchema = new mongoose.Schema({
   },
   publication_date: {
     type: Date,
-    required: true,
+    default: Date.now,
   },
   photo: {
     type: String,
@@ -30,36 +29,41 @@ const experienceSchema = new mongoose.Schema({
     },
     city: {
       type: String,
-      required: true,
+      // required: true,
     },
     longitude: {
-      type: Number,
-      required: true,
+      type: String,
+      // required: true,
     },
     latitude: {
-      type: Number,
-      required: true,
+      type: String,
+      // required: true,
     },
   },
-  experience_type: {
+  experienceType: {
     type: String,
-    required: true,
+    // required: true,
   },
+
   text_body: {
     type: String,
+    // required: true,
   },
   photo_body: [
     {
       type: String,
     },
   ],
-  times_bookmarked: {
-    type: Number,
-    default: 0,
-  },
   comments: [
     {
-      type: [{ type: mongoose.Schema.Types.ObjectId }],
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "comment",
+    },
+  ],
+  bookmarked_by: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
     },
   ],
 });
