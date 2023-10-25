@@ -1,11 +1,13 @@
 import express from "express";
+import multer from "multer";
 import cors from "cors";
 import colors from "colors";
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
-import router from "./routes/personRoutes.js";
-import placeRoutes from "./routes/placeRoutes.js";
-import personRoutes from "./routes/personRoutes.js";
+import experienceRoutes from "./routes/experienceRoutes.js";
+import commentRoutes from "./routes/commentRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import cloudinaryConfig from "./config/cloudinaryConfig.js";
 
 dotenv.config();
 
@@ -19,6 +21,7 @@ const addMiddlewares = () => {
       extended: true,
     })
   );
+  cloudinaryConfig();
 };
 
 const startServer = () => {
@@ -30,9 +33,9 @@ const startServer = () => {
 };
 
 const addRoutes = () => {
-  app.use("/api", router);
-  app.use("/api/places", placeRoutes);
-  app.use("/api/people", personRoutes);
+  app.use("/api/experiences", experienceRoutes);
+  app.use("/api/users", userRoutes);
+  app.use("/api/comments", commentRoutes);
 };
 
 //CRUD Create Read Update Delete
@@ -52,12 +55,3 @@ const DBConnection = async () => {
   addRoutes();
   startServer();
 })();
-
-//NOTE - How to make use of the URL and query params to see how we organize/ get our data
-//NOTE - The more values we give to our API, the better
-//NOTE - Review URL&QUERY PARAMS 3in mongoose documentation
-//NOTE - Review POPULATE method in mongoose documentation
-
-// Ok response- smthg sent to the front end
-//error for data submission
-// inside ok error, error code for missing data
