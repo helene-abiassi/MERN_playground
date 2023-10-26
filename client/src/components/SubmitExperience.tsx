@@ -22,19 +22,22 @@ export interface Experience extends ExperienceImage {
   };
   experienceType: string;
   text_body: string;
-  //   photo_body: string | string[];
 }
 
 export interface ExperienceImage {
-  photo: string;
+  userImage: string;
+  photo_body: string | string[];
 }
 
 function SubmitExperience() {
+  const [displayPhoto, setDisplayPhoto] = useState<File | string>("");
+  const [photoAlbum, setPhotoAlbum] = useState<File[] | string[]>([]);
+
   const [newExperience, setNewExperience] = useState({
     author: {
       _id: "652ad65dfef8bfeece28f7cb",
       username: "",
-      email: "",
+      email: "bobolechien@test.com",
       bio: "",
       member_since: Date(),
       user_image: "",
@@ -51,11 +54,12 @@ function SubmitExperience() {
     },
     experienceType: "", //Change it to a dropdown selection
     text_body: "",
-    // photo_body: "",
+    photo_body: [""],
   });
 
   const handleFormInput = (e: ChangeEvent<HTMLInputElement>) => {
-    setNewExperience({ ...newExperience, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setNewExperience({ ...newExperience, [name]: value });
   };
 
   const handleLocationInput = (e: ChangeEvent<HTMLInputElement>) => {
@@ -69,11 +73,88 @@ function SubmitExperience() {
     });
   };
 
+  const handleTypeInput = (e: ChangeEvent<HTMLSelectElement>) => {
+    setNewExperience({ ...newExperience, experienceType: e.target.value });
+  };
+
+  const handlePhotoInput = (e: ChangeEvent<HTMLInputElement>) => {
+    console.log("e :>> ", e);
+    setDisplayPhoto(e.target.files?.[0] || "");
+  };
+
+  const handleDisplayPhotoSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formdata = new FormData();
+    formdata.append("photo", displayPhoto);
+    console.log("formdata :>> ", formdata);
+
+    const requestOptions = {
+      method: "POST",
+      body: formdata,
+    };
+
+    try {
+      const response = await fetch(
+        "http://localhost:5005/api/experiences/mainphotoupload",
+        requestOptions
+      );
+      const result = (await response.json()) as ExperienceImage;
+      // console.log("result :>> ", result);
+
+      setNewExperience({ ...newExperience, photo: result.userImage });
+    } catch (error) {
+      console.log("error :>> ", error);
+    }
+  };
+
+  const handlePhotoAlbumInput = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const photoArray: File[] = [];
+      for (let i = 0; i < files.length; i++) {
+        photoArray.push(files[i]);
+      }
+      console.log("photoArray :>> ", photoArray);
+      setPhotoAlbum(photoArray);
+    }
+  };
+
+  const handlePhotoAlbumSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formdata = new FormData();
+    for (let i = 0; i < photoAlbum.length; i++) {
+      formdata.append("photo_body", photoAlbum[i]);
+    }
+
+    console.log("formdata :>> ", formdata);
+    const requestOptions = {
+      method: "POST",
+      body: formdata,
+    };
+
+    try {
+      const response = await fetch(
+        "http://localhost:5005/api/experiences/photoalbumuploady",
+        requestOptions
+      );
+
+      const result = await response.json();
+      console.log("result album photo:>> ", result);
+      setNewExperience({ ...newExperience, photo_body: result.photo_urls });
+    } catch (error) {
+      console.log("error :>> ", error);
+    }
+  };
+
   const handleSubmitExperience = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
+    const photoBodyJSON = JSON.stringify(newExperience.photo_body);
 
     const urlencoded = new URLSearchParams();
     urlencoded.append("_id", newExperience.author._id);
@@ -81,13 +162,13 @@ function SubmitExperience() {
     urlencoded.append("title", newExperience.title);
     urlencoded.append("caption", newExperience.caption);
     urlencoded.append("photo", newExperience.photo);
-    urlencoded.append("experienceType", newExperience.experienceType);
-    urlencoded.append("text_body", newExperience.text_body);
     urlencoded.append("country", newExperience.location.country);
     urlencoded.append("city", newExperience.location.city);
     urlencoded.append("longitude", newExperience.location.latitude);
     urlencoded.append("latitude", newExperience.location.longitude);
-    console.log("location :>> ", newExperience.location);
+    urlencoded.append("experienceType", newExperience.experienceType);
+    urlencoded.append("text_body", newExperience.text_body);
+    urlencoded.append("photo_body", photoBodyJSON);
 
     const requestOptions = {
       method: "POST",
@@ -105,19 +186,33 @@ function SubmitExperience() {
     } catch (error) {
       console.log("error :>> ", error);
     }
+    alert("yey!"); //!Replace with modal/toast ++ redirect to story page
   };
 
   useEffect(() => {
     setNewExperience(newExperience);
   }, []);
 
+  //Do delete + edit experience (not sure where// show in grid and details)
   return (
     <div>
       <div className="inputColorBox">
-        <form action="">
+        <form onSubmit={handleDisplayPhotoSubmit}>
           photo
-          <input type="file" />
-          <button>upload</button>
+          <input onChange={handlePhotoInput} name="photo" type="file" />
+          <button type="submit">upload</button>
+        </form>
+        <br />
+        <form onSubmit={handlePhotoAlbumSubmit}>
+          photo album:
+          <input
+            onChange={handlePhotoAlbumInput}
+            multiple
+            name="photo_body"
+            type="file"
+          />
+          <button type="submit">upload</button>
+          <figcaption>*you can upload up to 4 photos</figcaption>
         </form>
         <br />
         <form onSubmit={handleSubmitExperience}>
@@ -131,23 +226,28 @@ function SubmitExperience() {
           <br />
           <br />
           <label htmlFor="country">country:</label>
-          <input onChange={handleFormInput} name="country" type="text" />
+          <input onChange={handleLocationInput} name="country" type="text" />
           <br />
           <br />
           <label htmlFor="city">city:</label>
-          <input onChange={handleFormInput} name="city" type="text" />
+          <input onChange={handleLocationInput} name="city" type="text" />
           <br />
           <br />
           <label htmlFor="longitude">longitude:</label>
-          <input onChange={handleFormInput} name="longitude" type="text" />
+          <input onChange={handleLocationInput} name="longitude" type="text" />
           <br />
           <br />
           <label htmlFor="latitude">latitude:</label>
-          <input onChange={handleFormInput} name="latitude" type="text" />
+          <input onChange={handleLocationInput} name="latitude" type="text" />
           <br />
           <br />
           <label htmlFor="experienceType">experience type:</label>
-          <select id="experienceType" name="experienceType">
+          <select
+            onChange={handleTypeInput}
+            id="experienceType"
+            name="experienceType"
+            value={newExperience.experienceType}
+          >
             <option value="search">Search</option>
             <option value="hiking">hiking</option>
             <option value="faunaflora">fauna & flora</option>
@@ -163,7 +263,9 @@ function SubmitExperience() {
             type="text"
           />
           <br />
-          <button type="submit">submit</button>
+          <button className="formButton" type="submit">
+            submit
+          </button>
         </form>
       </div>
     </div>
