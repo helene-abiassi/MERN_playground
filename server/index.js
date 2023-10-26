@@ -8,6 +8,8 @@ import experienceRoutes from "./routes/experienceRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import cloudinaryConfig from "./config/cloudinaryConfig.js";
+import passportConfig from "./config/passport.js";
+import passport from "passport";
 
 dotenv.config();
 
@@ -22,6 +24,8 @@ const addMiddlewares = () => {
     })
   );
   cloudinaryConfig();
+  passport.initialize();
+  passportConfig(passport);
 };
 
 const startServer = () => {
