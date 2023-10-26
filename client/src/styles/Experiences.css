@@ -1,0 +1,8 @@
+.inputColorBox {
+  border-radius: 10px;
+  background: #efcb59;
+  box-shadow: 20px 20px #fa9397;
+  padding: 20px;
+  min-width: 600px;
+  min-height: 500px;
+}
