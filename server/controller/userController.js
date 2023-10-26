@@ -1,7 +1,8 @@
 import { v2 as cloudinary } from "cloudinary";
-import { userModel } from "../models/userModel.js";
+import userModel from "../models/userModel.js";
 import { experienceModel } from "../models/experienceModel.js";
-import { hashPassword } from "../utilities/hashPassword.js";
+import { hashPassword, verifyPassword } from "../utilities/passwordServices.js";
+import { generateToken } from "../utilities/tokenServices.js";
 
 const getAllUsers = async (req, res) => {
   const allUsers = await userModel.find().populate([
@@ -134,4 +135,74 @@ const signUp = async (req, res) => {
   }
 };
 
-export { uploadImage, signUp, getAllUsers, getUserById };
+const logIn = async (req, res) => {
+  console.log("req.body :>> ", req.body);
+
+  try {
+    const existingUser = await userModel.findOne({ email: req.body.email });
+    if (!existingUser) {
+      res.status(404).json({
+        msg: "no user found with this email",
+      });
+    } else {
+      const checkPassword = await verifyPassword(
+        req.body.password,
+        existingUser.password
+      );
+
+      if (!checkPassword) {
+        res.status(404).json({
+          message: "Wrong password, try again",
+        });
+      }
+      if (checkPassword) {
+        const token = generateToken(existingUser._id);
+        if (token) {
+          res.status(200).json({
+            message: "login success",
+            user: {
+              username: existingUser.username,
+              email: existingUser.email,
+              user_image: existingUser.user_image,
+            },
+            token,
+          });
+        } else {
+          console.log("error generating token");
+          res.status(400).json({
+            message: "something went wrong with your request",
+          });
+        }
+
+        // res.status(200).json({
+        //   message: "you are logged  in",
+        // });
+      }
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "I don't have a clue",
+    });
+  }
+};
+
+const getProfile = async (req, res) => {
+  console.log("req :>> ", req);
+
+  if (req.user) {
+    res.status(200).json({
+      userProfile: {
+        username: req.user.username,
+        email: req.user.email,
+        user_image: req.user.user_image,
+      },
+    });
+  }
+  if (!req.user) {
+    res.status(200).json({
+      message: "You need to log in to access this page",
+    });
+  }
+};
+
+export { uploadImage, signUp, getAllUsers, getUserById, logIn, getProfile };
