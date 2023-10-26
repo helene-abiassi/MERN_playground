@@ -1,7 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import { commentModel } from "../models/commentModel.js";
 import { experienceModel } from "../models/experienceModel.js";
-import { userModel } from "../models/userModel.js";
+import userModel from "../models/userModel.js";
 
 const getAllExperiences = async (req, res) => {
   const { comments } = req.query;
@@ -201,7 +201,7 @@ const uploadPhoto = async (req, res) => {
     try {
       // Upload the image
       const uploadedImage = await cloudinary.uploader.upload(req.file.path, {
-        folder: "voyageApp/userphotos",
+        folder: "voyageApp/experienceMainPhotos",
       });
       console.log("uploadedImage", uploadedImage);
       res.status(200).json({
@@ -219,6 +219,35 @@ const uploadPhoto = async (req, res) => {
   }
 };
 
+const uploadMultiplePhotos = async (req, res) => {
+  const photos = req.files;
+
+  if (!photos || photos.length === 0) {
+    res.status(400).json({ error: "No files were uploaded." });
+  }
+
+  try {
+    const uploadedImages = await Promise.all(
+      photos.map(async (photo) => {
+        const uploadedImage = await cloudinary.uploader.upload(photo.path, {
+          folder: "voyageApp/experiencePhotoAlbum",
+        });
+        uploadedImage.secure_url;
+      })
+    );
+
+    res.status(200).json({
+      message: "Images uploaded successfully",
+      photo_urls: uploadedImages,
+    });
+  } catch (error) {
+    console.error("Error uploading images", error);
+    res.status(500).json({
+      error: "Internal server error",
+    });
+  }
+};
+
 export {
   getAllExperiences,
   getExperiencesByType,
@@ -227,4 +256,5 @@ export {
   getExperiencesByCity,
   submitExperience,
   uploadPhoto,
+  uploadMultiplePhotos,
 };
