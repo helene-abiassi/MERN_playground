@@ -1,5 +1,6 @@
 import { Link, Navigate, useNavigate, useRouteError } from "react-router-dom";
 import { RouteErrorType } from "../types/customTypes";
+import { useEffect } from "react";
 
 function ErrorPage() {
   const error = useRouteError() as RouteErrorType;
@@ -8,6 +9,10 @@ function ErrorPage() {
   const goHome = () => {
     navigateTo("/");
   };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div>
