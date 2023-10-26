@@ -1,6 +1,6 @@
 import { commentModel } from "../models/commentModel.js";
 import { experienceModel } from "../models/experienceModel.js";
-import { userModel } from "../models/userModel.js";
+import userModel from "../models/userModel.js";
 
 const getAllComments = async (req, res) => {
   const allComments = await commentModel
@@ -79,9 +79,9 @@ const submitComment = async (req, res) => {
 };
 
 
-
 export {
   getAllComments,
   getCommentsByUserId,
   submitComment,
+  // getCommentsByExperienceId,
 };
