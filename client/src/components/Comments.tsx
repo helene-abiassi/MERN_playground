@@ -18,7 +18,7 @@ function Comments() {
     author: {
       _id: "652ada98fef8bfeece28f7cf",
       email: "thair@test.com",
-      username: "Thair Mushroom",
+      username: "",
       userImage:
         "https://res.cloudinary.com/dfm1r4ikr/image/upload/v1697307351/voyageApp/profilephoto_mushroom_calhq4.png",
     },
@@ -70,11 +70,12 @@ function Comments() {
     }
   };
 
-  const getRealTimeComments = () => {};
-
-  const submitComments = () => {};
-
+  // const getRealTimeComments = () => {}; //This will be done on ExpDetails page when fetching the entire document
+  const editComment = () => {
+    //TODO -
+  };
   const deleteComment = () => {
+    //TODO -
     try {
       if (window.confirm("Are you SURE you want to delete your comment?")) {
         console.log("successfull :>> ", "deletedMessage");
