@@ -6,6 +6,7 @@ import {
   getExperiencesById,
   getExperiencesByType,
   submitExperience,
+  uploadMultiplePhotos,
   uploadPhoto,
 } from "../controller/experienceController.js";
 import { multerUpload } from "../middlewares/multer.js";
@@ -22,10 +23,11 @@ router.get("/id/:_id", getExperiencesById);
 //POST Routes
 router.post("/experiencesubmission", submitExperience);
 router.post("/mainphotoupload", multerUpload.single("photo"), uploadPhoto);
+router.post(
+  "/photoalbumupload",
+  multerUpload.array("photo_body", 4),
+  uploadMultiplePhotos
+);
 
-// set up the same for multiple upload
-
-//Routes to set up :
-//&& Query params: bookmarks.length, comments.length??
 
 export default router;
