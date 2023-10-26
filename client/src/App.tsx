@@ -22,6 +22,7 @@ import Hiking from "./views/ExperienceTypes/Hiking";
 import ExpLayout from "./components/ExpLayout";
 import Profile from "./views/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Submit from "./views/Submit";
 
 function App() {
   const router = createBrowserRouter(
@@ -33,6 +34,7 @@ function App() {
           <Route path="all" element={<Experiences />} />
           <Route path="hiking" element={<Hiking />} />
           <Route path="wildlife" element={<Wildlife />} />
+          //! Do the same for all adventure types + make sure they're different,
         </Route>
         <Route
           path="experiences/:experienceTitle"
@@ -47,6 +49,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="submit"
+          element={
+            <ProtectedRoute>
+              <Submit />
             </ProtectedRoute>
           }
         />
