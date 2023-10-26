@@ -4,7 +4,7 @@ import "../styles/Home.css";
 import { Link } from "react-router-dom";
 
 export interface User extends UserImage {
-  username: string;
+  username?: string;
   email: string;
   password: string;
   bio: string;
@@ -83,6 +83,7 @@ function Signup() {
     urlencoded.append("email", newUser.email);
     urlencoded.append("password", newUser.password);
     urlencoded.append("user_image", newUser.userImage);
+
     const requestOptions = {
       method: "POST",
       headers: myHeaders,
