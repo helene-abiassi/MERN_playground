@@ -29,27 +29,36 @@ const getExperiencesById = async (req, res) => {
   const id = req.params._id;
 
   try {
-    const experienceByID = await experienceModel.find({
-      _id: id,
-    });
+    const experienceByID = await experienceModel.findById(id).populate([
+      {
+        path: "bookmarked_by",
+        select: ["username", "bio", "member_since", "user_image"],
+      },
+      { path: "comments" },
+      {
+        path: "author",
+        select: ["username", "email", "bio", "member_since", "user_image"],
+      },
+    ]);
+
     console.log("experienceByID :>> ", experienceByID);
 
-    if (experienceByID.length > 0) {
+    if (experienceByID) {
       res.status(200).json({
-        number: experienceByID.length,
+        number: 1,
         data: experienceByID,
       });
     } else {
-      res.status(200).json({
-        number: experienceByID.length,
+      res.status(404).json({
+        number: 0,
         errorMessage: "OH NO! No such id exists",
       });
     }
   } catch (error) {
     console.log("expType error :>> ", error);
     res.status(500).json({
-      errorMessage: "something went wrong in the request",
-      error,
+      errorMessage: "Something went wrong in the request",
+      error: error.message,
     });
   }
 };
@@ -84,13 +93,11 @@ const getExperiencesByType = async (req, res) => {
 
 const getExperiencesByCountry = async (req, res) => {
   const { country } = req.params;
-  console.log("country :>> ", country);
 
   try {
     const experienceByCountry = await experienceModel.find({
       "location.country": country,
     });
-    console.log("experienceByCountry :>> ", experienceByCountry);
 
     if (experienceByCountry.length > 0) {
       res.status(200).json({
@@ -98,16 +105,16 @@ const getExperiencesByCountry = async (req, res) => {
         data: experienceByCountry,
       });
     } else {
-      res.status(200).json({
-        number: experienceByCountry.length,
-        errorMessage: "OH NO! No such country exists",
+      res.status(404).json({
+        number: 0,
+        errorMessage: "No experiences found for the specified country",
       });
     }
   } catch (error) {
-    console.log("expType error :>> ", error);
+    console.error("Error in getExperiencesByCountry:", error);
     res.status(500).json({
-      errorMessage: "something went wrong in the request",
-      error,
+      errorMessage: "Internal server error",
+      error: error.message, // Include the error message for debugging
     });
   }
 };
@@ -121,7 +128,7 @@ const getExperiencesByCity = async (req, res) => {
       "location.city": city,
       "location.country": country,
     });
-    console.log("experienceByCity :>> ", experienceByCity);
+    // console.log("experienceByCity :>> ", experienceByCity);
 
     if (experienceByCity.length > 0) {
       res.status(200).json({
@@ -145,6 +152,8 @@ const getExperiencesByCity = async (req, res) => {
 
 const submitExperience = async (req, res) => {
   console.log("req.body :>> ", req.body);
+  const photosArray = JSON.parse(req.body.photo_body);
+  console.log("photosArray :>> ", photosArray);
 
   try {
     const existingUser = await userModel.findOne({ email: req.body.email });
@@ -164,7 +173,7 @@ const submitExperience = async (req, res) => {
           },
           experienceType: req.body.experienceType,
           text_body: req.body.text_body,
-          photo_body: req.body.photo_body,
+          photo_body: photosArray,
         });
 
         const savedSubmission = await newSubmission.save();
@@ -206,7 +215,7 @@ const uploadPhoto = async (req, res) => {
       console.log("uploadedImage", uploadedImage);
       res.status(200).json({
         message: "Image uploaded successfully",
-        userImage: uploadedImage.secure_url,
+        photo: uploadedImage.secure_url,
       });
       // Save the photo in the userphoto collection
     } catch (error) {
@@ -221,6 +230,7 @@ const uploadPhoto = async (req, res) => {
 
 const uploadMultiplePhotos = async (req, res) => {
   const photos = req.files;
+  console.log("photos :>> ", photos);
 
   if (!photos || photos.length === 0) {
     res.status(400).json({ error: "No files were uploaded." });
@@ -232,10 +242,10 @@ const uploadMultiplePhotos = async (req, res) => {
         const uploadedImage = await cloudinary.uploader.upload(photo.path, {
           folder: "voyageApp/experiencePhotoAlbum",
         });
-        uploadedImage.secure_url;
+        return uploadedImage.secure_url;
       })
     );
-
+    console.log("uploadedImages :>> ", uploadedImages);
     res.status(200).json({
       message: "Images uploaded successfully",
       photo_urls: uploadedImages,
@@ -257,4 +267,5 @@ export {
   submitExperience,
   uploadPhoto,
   uploadMultiplePhotos,
+  // getCommentsByExperienceId,
 };
