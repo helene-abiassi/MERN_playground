@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: true,
     default: "user",
   },
   email: {
@@ -45,4 +44,4 @@ const userSchema = new mongoose.Schema({
 
 const userModel = mongoose.model("user", userSchema);
 
-export { userModel };
+export default userModel;
