@@ -7,7 +7,6 @@ import {
 } from "react-router-dom";
 import "../src/styles/main.css";
 import Footer from "./components/Footer";
-// import NavBar from "./components/NavBar";
 import SignUp from "./views/SignUp";
 import LogIn from "./views/LogIn";
 import About from "./views/About";
