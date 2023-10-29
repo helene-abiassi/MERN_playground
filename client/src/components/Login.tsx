@@ -2,7 +2,7 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import "../styles/logUp.css";
 import "../styles/Home.css";
 import { Link } from "react-router-dom";
-import { User } from "./Signup";
+import { User } from "../types/customTypes";
 
 interface LogInCredentials {
   email: string;
