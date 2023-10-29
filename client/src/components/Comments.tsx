@@ -1,31 +1,22 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { Experience } from "../types/customTypes";
 
-export interface CommentsType {
-  author: {
-    _id: string;
-    email: string;
-    username: string;
-    userImage: string;
-  };
-  date: Date;
-  message: string;
-}
-
-function Comments() {
+function Comments({ comments }: Experience) {
   const [user, setUser] = useState(true);
-  const [comments, setComments] = useState<CommentsType[] | null>(null);
+  // const [comments, setComments] = useState<CommentsType[] | null>(null);
   const [newComment, setNewComment] = useState({
     author: {
-      _id: "652ada98fef8bfeece28f7cf",
-      email: "thair@test.com",
+      _id: "",
+      email: "",
       username: "",
-      userImage:
-        "https://res.cloudinary.com/dfm1r4ikr/image/upload/v1697307351/voyageApp/profilephoto_mushroom_calhq4.png",
+      user_image: "",
     },
     date: new Date(),
     message: "",
   });
+  //!Author not being populated
 
+  console.log("comments :>> ", comments);
   const formatDate = (date: Date): string => {
     const formattedDate = new Date(date.getSeconds() * 1000).toLocaleString();
     return formattedDate;
@@ -34,11 +25,10 @@ function Comments() {
   const handleNewComments = (e: ChangeEvent<HTMLInputElement>) => {
     setNewComment({
       ...newComment,
-      //   [newComment.message]: e.target.value, //?
       [e.target.name]: e.target.value,
     });
   };
-
+  //! COMMENTS NOT UPDATING ON DB + PAGE
   const handleSubmitComment = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Add if (existingUser)
@@ -49,7 +39,7 @@ function Comments() {
     urlencoded.append("_id", newComment.author._id);
     urlencoded.append("email", newComment.author.email);
     urlencoded.append("username", newComment.author.username);
-    urlencoded.append("user_image", newComment.author.userImage);
+    urlencoded.append("user_image", newComment.author.user_image);
     urlencoded.append("message", newComment.message);
 
     const requestOptions = {
@@ -70,7 +60,6 @@ function Comments() {
     }
   };
 
-  // const getRealTimeComments = () => {}; //This will be done on ExpDetails page when fetching the entire document
   const editComment = () => {
     //TODO -
   };
@@ -87,7 +76,7 @@ function Comments() {
 
   useEffect(() => {
     setNewComment(newComment);
-  }, []);
+  }, [comments]);
 
   return (
     <div>
@@ -121,9 +110,15 @@ function Comments() {
           </button>
         </div>
       </form>
-      <div className="commentsBox">
-        <p>{newComment.author.username}</p>
-        <p>{newComment.message}</p>
+      <div>
+        {comments.map((comment, idComment) => {
+          return (
+            <div key={idComment}>
+              <p>{comment.author.email}</p>
+              <p>{comment.message}</p>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
