@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { User } from "../types/customTypes";
 
 function ProfileCard() {
@@ -32,7 +32,7 @@ function ProfileCard() {
 
         if (response.ok) {
           const result = await response.json();
-          console.log("result :>> ", result);
+          console.log("result to get my user profile :>> ", result);
           const user = result.userProfile as User;
 
           setUser(user);
@@ -44,12 +44,16 @@ function ProfileCard() {
     }
   };
 
+  useEffect(() => {
+    getProfile();
+  }, []);
+
   return (
     <div>
       <div className="profileColumns">
         <div className="profileColumnLeft">
           <p className="inputKeys">photo:</p>
-          {/* <img src={user?.userImage} alt="" /> //!NOT WORKING - See custom types */}
+          <img style={{ width: "50%" }} src={user?.user_image} alt="" />{" "}
         </div>
         <div className="profileColumn">
           <p className="inputKeys">username:{user?.username}</p>
@@ -57,9 +61,8 @@ function ProfileCard() {
           <p className="inputKeys">member since:{user?.member_since}</p>{" "}
           {/* //!FORMAT DATE */}
           <p className="inputKeys">bio:{user?.bio}</p>
-          {/* //!BIO array showing # */}
         </div>
-        <button onClick={getProfile}>get profile</button>
+        {/* <button onClick={getProfile}>get profile</button> */}
       </div>
     </div>
   );
