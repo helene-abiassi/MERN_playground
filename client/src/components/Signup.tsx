@@ -2,18 +2,7 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import "../styles/logUp.css";
 import "../styles/Home.css";
 import { Link } from "react-router-dom";
-
-export interface User extends UserImage {
-  username?: string;
-  email: string;
-  password: string;
-  bio: string;
-  member_since: Date;
-}
-
-export interface UserImage {
-  userImage: string;
-}
+import { User, UserImage } from "../types/customTypes";
 
 function Signup() {
   const [selectedFile, setSelectedFile] = useState<File | string>("");
@@ -21,10 +10,28 @@ function Signup() {
     username: "",
     email: "",
     password: "",
-    userImage:
+    user_image:
       "https://res.cloudinary.com/dfm1r4ikr/image/upload/v1697397728/voyageApp/userPhoto.png",
     bio: "",
     member_since: new Date(),
+    bookmarks: [
+      {
+        id: "",
+        author: "",
+        title: "",
+        publication_date: Date(),
+        photo: "",
+      },
+    ],
+    submissions: [
+      {
+        id: "",
+        author: "",
+        title: "",
+        publication_date: Date(),
+        photo: "",
+      },
+    ],
   });
   const [passwordType, setPasswordType] = useState("password");
   const [showOrHide, setShowOrHide] = useState("show");
@@ -46,7 +53,7 @@ function Signup() {
     e.preventDefault();
 
     const formdata = new FormData();
-    formdata.append("userImage", selectedFile);
+    formdata.append("user_image", selectedFile);
 
     const requestOptions = {
       method: "POST",
@@ -61,7 +68,7 @@ function Signup() {
       const result = (await response.json()) as UserImage;
 
       //Get url from profile picture
-      setNewUser({ ...newUser, userImage: result.userImage });
+      setNewUser({ ...newUser, user_image: result.user_image });
     } catch (error) {
       console.log("error :>> ", error);
     }
@@ -82,7 +89,8 @@ function Signup() {
     urlencoded.append("username", newUser.username);
     urlencoded.append("email", newUser.email);
     urlencoded.append("password", newUser.password);
-    urlencoded.append("user_image", newUser.userImage);
+    urlencoded.append("user_image", newUser.user_image);
+    urlencoded.append("bio", newUser.bio);
 
     const requestOptions = {
       method: "POST",
@@ -115,7 +123,7 @@ function Signup() {
         <div className="photoLine">
           <div>
             <form className="photoForm" onSubmit={handleFileSubmit}>
-              <input onChange={handleFileInput} name="userImage" type="file" />
+              <input onChange={handleFileInput} name="user_image" type="file" />
               <button className="formButton uploadButton" type="submit">
                 upload
               </button>
@@ -129,7 +137,7 @@ function Signup() {
               marginLeft: "70px",
               borderRadius: "50%",
             }}
-            src={newUser.userImage}
+            src={newUser.user_image}
             alt=""
           />
         </div>
@@ -174,6 +182,14 @@ function Signup() {
               >
                 {showOrHide}
               </button>
+              <label htmlFor="bio">Tell us a little bit about yourself</label>
+              <input
+                onChange={handleRegisterInput}
+                name="bio"
+                type="text"
+                maxLength={250}
+              />
+              <p>include letter counter</p>
             </div>
           </div>
           <br />
