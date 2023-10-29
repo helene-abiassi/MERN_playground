@@ -1,30 +1,33 @@
-import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import "../styles/DetailsPage.css";
 import Comments from "../components/Comments";
 import BackButton from "../components/BackButton";
+import { formatDate } from "../components/Functions";
 
 function ExperienceDetails() {
-  const { experienceTitle } = useParams();
+  const location = useLocation();
+
+  const { experience } = location.state;
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+  }, [experience.title]);
 
   return (
     <div>
       <div className="detailsSection">
         <BackButton />
-        <h1>{experienceTitle}</h1>
+        <h2>{experience.title}</h2>
       </div>
       <img
         style={{ width: "50%", height: "50%" }}
-        src="https://res.cloudinary.com/dfm1r4ikr/image/upload/v1697311768/voyageApp/expphoto_treptowerPark_hrlyk7.png"
+        src={experience.photo}
         alt=""
       />
       <div className="textBox">
-        <p>{"{caption}"}</p>
-        <p>{"{date of publication}"}</p>
+        <p>{experience.caption}</p>
+        <p>{formatDate(experience.publication_date)}</p>
 
         <hr />
         <p>
@@ -48,7 +51,7 @@ function ExperienceDetails() {
               stroke-linejoin="round"
             />
           </svg>
-          {"{country, city}"}
+          {experience.location.city},{experience.location.country}
         </p>
         <p>
           {" "}
@@ -64,7 +67,7 @@ function ExperienceDetails() {
               fill="black"
             />
           </svg>
-          {"{adventure type}"}
+          {experience.experienceType}
         </p>
 
         <p>
@@ -113,10 +116,27 @@ function ExperienceDetails() {
           </svg>
         </p>
         <hr />
-        <p>{"image carousel"}</p>
-        <p>{"body of text"}</p>
+        <p>
+          {" "}
+          {/* {experience.comments.map((comment: string, idComment: number) => {
+            return (
+              <div key={idComment}>
+                <p>{comment.message}</p>
+              </div>
+            );
+          })} */}
+        </p>
+        <hr />
+        <p>{experience.text_body}</p>
+        {experience.photo_body.map((photo: string, idPhoto: number) => {
+          return (
+            <div key={idPhoto}>
+              <img src={photo} alt="" />
+            </div>
+          );
+        })}
       </div>
-      <Comments />
+      <Comments comments={experience.comments} />
     </div>
   );
 }
