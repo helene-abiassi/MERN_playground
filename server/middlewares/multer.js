@@ -5,7 +5,7 @@ const storage = multer.diskStorage({});
 
 const fileFilter = (req, file, cb) => {
   // do we accept the file the user is uploading or not, type of file
-
+  console.log("req>>>", req);
   console.log("file :>> ", file);
 
   const extension = path.extname(file.originalname);
