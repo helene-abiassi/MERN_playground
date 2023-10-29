@@ -1,4 +1,4 @@
-import SubmitExperience from "../components/submitExperience";
+import SubmitExperience from "../components/SubmitExperience";
 
 function Submit() {
   return (
