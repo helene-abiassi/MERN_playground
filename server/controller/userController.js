@@ -66,7 +66,7 @@ const uploadImage = async (req, res) => {
       console.log("uploadedImage", uploadedImage);
       res.status(200).json({
         message: "Image uploaded successfully",
-        userImage: uploadedImage.secure_url,
+        user_image: uploadedImage.secure_url,
       });
       // Save the photo in the userphoto collection
     } catch (error) {
@@ -80,17 +80,12 @@ const uploadImage = async (req, res) => {
 };
 
 const signUp = async (req, res) => {
-  // receive all the new user information in the body of the req coming from client
-  // it will process that info and store it in db
   console.log("req.body :>> ", req.body);
-
-  // Hash user password
 
   try {
     const hashedPassword = await hashPassword(req.body.password);
 
     if (hashedPassword) {
-      // check if user already exists
       const existingUser = await userModel.findOne({ email: req.body.email });
 
       if (existingUser) {
@@ -98,14 +93,13 @@ const signUp = async (req, res) => {
           message: "email already exists in the db",
         });
       } else {
-        // if no existing user, we save the new user
-
         try {
           const newUser = new userModel({
             username: req.body.username,
             email: req.body.email,
             password: hashedPassword,
             user_image: req.body.user_image,
+            bio: req.body.bio,
           });
 
           console.log("newUser :>> ", newUser);
@@ -114,9 +108,10 @@ const signUp = async (req, res) => {
           res.status(201).json({
             message: "New user registered",
             user: {
-              userName: savedUser.username,
+              username: savedUser.username,
               email: savedUser.email,
-              userImage: savedUser.user_image,
+              user_image: savedUser.user_image,
+              bio: savedUser.bio,
             },
           });
         } catch (error) {
@@ -164,6 +159,7 @@ const logIn = async (req, res) => {
               username: existingUser.username,
               email: existingUser.email,
               user_image: existingUser.user_image,
+              bio: existingUser.bio,
             },
             token,
           });
@@ -173,10 +169,6 @@ const logIn = async (req, res) => {
             message: "something went wrong with your request",
           });
         }
-
-        // res.status(200).json({
-        //   message: "you are logged  in",
-        // });
       }
     }
   } catch (error) {
@@ -187,7 +179,7 @@ const logIn = async (req, res) => {
 };
 
 const getProfile = async (req, res) => {
-  console.log("req :>> ", req);
+  console.log("req.USER :>> ", req.user);
 
   if (req.user) {
     res.status(200).json({
@@ -195,6 +187,10 @@ const getProfile = async (req, res) => {
         username: req.user.username,
         email: req.user.email,
         user_image: req.user.user_image,
+        bio: req.user.bio,
+        bookmarks: req.user.bookmarks,
+        submissions: req.user.submissions,
+        member_since: req.user.member_since,
       },
     });
   }
