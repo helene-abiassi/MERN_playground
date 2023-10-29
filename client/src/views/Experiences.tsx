@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import ExpLayout from "../components/ExpLayout";
 
 function Experiences() {
   useEffect(() => {
