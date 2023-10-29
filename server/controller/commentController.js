@@ -79,9 +79,4 @@ const submitComment = async (req, res) => {
 };
 
 
-export {
-  getAllComments,
-  getCommentsByUserId,
-  submitComment,
-  // getCommentsByExperienceId,
-};
+export { getAllComments, getCommentsByUserId, submitComment };
