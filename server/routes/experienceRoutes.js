@@ -15,10 +15,10 @@ const router = express.Router();
 
 //GET Routes
 router.get("/all", getAllExperiences);
-router.get("/:country", getExperiencesByCountry);
-router.get("/:country/:city", getExperiencesByCity);
-router.get("/type/:experienceType", getExperiencesByType);
 router.get("/id/:_id", getExperiencesById);
+router.get("/type/:experienceType", getExperiencesByType);
+// router.get("/:country/:city", getExperiencesByCity);
+router.get("/country/:country", getExperiencesByCountry);
 
 //POST Routes
 router.post("/experiencesubmission", submitExperience);
@@ -28,6 +28,5 @@ router.post(
   multerUpload.array("photo_body", 4),
   uploadMultiplePhotos
 );
-
 
 export default router;
