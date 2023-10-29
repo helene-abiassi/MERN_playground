@@ -1,39 +1,14 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { Experience, ExperienceImage } from "../types/customTypes";
 import "../styles/Home.css";
 import "../styles/Experiences.css";
-
-export interface Experience extends ExperienceImage {
-  author: {
-    _id: string;
-    username: string;
-    email: string;
-    bio: string;
-    member_since: Date;
-    user_image: string;
-  };
-  title: string;
-  caption: string;
-  publication_date: Date;
-  location: {
-    country: string;
-    city: string;
-    longitude: string;
-    latitude: string;
-  };
-  experienceType: string;
-  text_body: string;
-}
-
-export interface ExperienceImage {
-  userImage: string;
-  photo_body: string | string[];
-}
+import { useNavigate } from "react-router-dom";
 
 function SubmitExperience() {
   const [displayPhoto, setDisplayPhoto] = useState<File | string>("");
   const [photoAlbum, setPhotoAlbum] = useState<File[] | string[]>([]);
 
-  const [newExperience, setNewExperience] = useState({
+  const [newExperience, setNewExperience] = useState<Experience>({
     author: {
       _id: "652ad65dfef8bfeece28f7cb",
       username: "",
@@ -52,10 +27,12 @@ function SubmitExperience() {
       longitude: "",
       latitude: "",
     },
-    experienceType: "", //Change it to a dropdown selection
+    experienceType: "",
     text_body: "",
     photo_body: [""],
   });
+
+  const navigateTo = useNavigate();
 
   const handleFormInput = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -74,6 +51,7 @@ function SubmitExperience() {
   };
 
   const handleTypeInput = (e: ChangeEvent<HTMLSelectElement>) => {
+    console.log("e.target.value :>> ", e.target.value);
     setNewExperience({ ...newExperience, experienceType: e.target.value });
   };
 
@@ -100,9 +78,9 @@ function SubmitExperience() {
         requestOptions
       );
       const result = (await response.json()) as ExperienceImage;
-      // console.log("result :>> ", result);
+      console.log("result single photo:>> ", result);
 
-      setNewExperience({ ...newExperience, photo: result.userImage });
+      setNewExperience({ ...newExperience, photo: result.photo });
     } catch (error) {
       console.log("error :>> ", error);
     }
@@ -122,7 +100,6 @@ function SubmitExperience() {
 
   const handlePhotoAlbumSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     const formdata = new FormData();
     for (let i = 0; i < photoAlbum.length; i++) {
       formdata.append("photo_body", photoAlbum[i]);
@@ -136,12 +113,15 @@ function SubmitExperience() {
 
     try {
       const response = await fetch(
-        "http://localhost:5005/api/experiences/photoalbumuploady",
+        "http://localhost:5005/api/experiences/photoalbumupload",
         requestOptions
       );
 
       const result = await response.json();
       console.log("result album photo:>> ", result);
+      console.log("result.photo_urls :>> ", result.photo_urls);
+      // const photosArray = result.photo_urls;
+      // console.log("photosArray :>> ", photosArray);
       setNewExperience({ ...newExperience, photo_body: result.photo_urls });
     } catch (error) {
       console.log("error :>> ", error);
@@ -150,6 +130,7 @@ function SubmitExperience() {
 
   const handleSubmitExperience = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log("newExperience :>> ", newExperience);
 
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
@@ -157,7 +138,7 @@ function SubmitExperience() {
     const photoBodyJSON = JSON.stringify(newExperience.photo_body);
 
     const urlencoded = new URLSearchParams();
-    urlencoded.append("_id", newExperience.author._id);
+    urlencoded.append("a_id", newExperience.author.a_id);
     urlencoded.append("email", newExperience.author.email);
     urlencoded.append("title", newExperience.title);
     urlencoded.append("caption", newExperience.caption);
@@ -187,10 +168,12 @@ function SubmitExperience() {
       console.log("error :>> ", error);
     }
     alert("yey!"); //!Replace with modal/toast ++ redirect to story page
+    navigateTo(`/experiences/${newExperience.title}`); //!M NOT WORKING
   };
 
   useEffect(() => {
     setNewExperience(newExperience);
+    console.log("newExperience :>> ", newExperience);
   }, []);
 
   //Do delete + edit experience (not sure where// show in grid and details)
