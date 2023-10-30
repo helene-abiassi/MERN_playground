@@ -1,14 +1,16 @@
 import { ReactNode, createContext, useEffect, useState } from "react";
 import { Experience } from "../types/customTypes";
+// import useMyFetch from "../hooks/useMyFetch";
 
 interface ExperiencesContextType {
   experiences: Experience[];
-  urlParams: string | null;
+  urlParams: string;
   fetchExperiences: () => Promise<void>;
+  // loading: boolean;
+  // error: string;
 }
-//!Add Query params + state var to Type above
 
-const initialContext = {
+const initialContext: ExperiencesContextType = {
   experiences: [
     {
       author: {
@@ -55,8 +57,10 @@ const initialContext = {
       ],
     },
   ],
-  urlParams: null,
+  urlParams: "all",
   fetchExperiences: () => Promise.resolve(),
+  loading: true,
+  error: "",
 };
 
 interface ProviderPropsType {
@@ -64,7 +68,7 @@ interface ProviderPropsType {
 }
 
 export const ExperiencesContext =
-  createContext<ExperiencesContextType>(initialContext); //!Fix TS error
+  createContext<ExperiencesContextType>(initialContext);
 
 export const ExperiencesContextProvider = (props: ProviderPropsType) => {
   const [experiences, setExpriences] = useState<Experience[]>([
