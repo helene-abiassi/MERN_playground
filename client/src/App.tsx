@@ -22,6 +22,8 @@ import ExpLayout from "./components/ExpLayout";
 import Profile from "./views/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Submit from "./views/Submit";
+import { ExperiencesContextProvider } from "./context/ExperiencesContext";
+import { AuthContextProvider } from "./context/AuthContext";
 
 function App() {
   const router = createBrowserRouter(
@@ -66,9 +68,12 @@ function App() {
   return (
     <>
       <div className="mainBody">
-        <RouterProvider router={router} />
-        <Outlet />
-        <Footer />
+        <AuthContextProvider>
+          <ExperiencesContextProvider>
+            <RouterProvider router={router} />
+          </ExperiencesContextProvider>
+          <Footer />
+        </AuthContextProvider>
       </div>
     </>
   );
