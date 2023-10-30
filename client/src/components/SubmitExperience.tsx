@@ -10,7 +10,7 @@ function SubmitExperience() {
 
   const [newExperience, setNewExperience] = useState<Experience>({
     author: {
-      _id: "652ad65dfef8bfeece28f7cb",
+      a_id: "652ad65dfef8bfeece28f7cb",
       username: "",
       email: "bobolechien@test.com",
       bio: "",
@@ -168,7 +168,7 @@ function SubmitExperience() {
       console.log("error :>> ", error);
     }
     alert("yey!"); //!Replace with modal/toast ++ redirect to story page
-    navigateTo(`/experiences/${newExperience.title}`); //!M NOT WORKING
+    navigateTo("/experiences");
   };
 
   useEffect(() => {
