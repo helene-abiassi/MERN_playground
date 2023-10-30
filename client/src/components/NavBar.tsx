@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useContext } from "react";
 import { NavLink } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 function NavBar() {
-  const [user, setUser] = useState(false);
+  const { user } = useContext(AuthContext);
 
-  console.log("setUser :>> ", setUser);
-
+  console.log("user :>> ", user);
   return (
     <>
       <nav>
