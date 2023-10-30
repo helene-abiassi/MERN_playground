@@ -1,28 +1,39 @@
 import { Link } from "react-router-dom";
 import { Experience } from "../types/customTypes";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { formatDate } from "./Functions";
+import { AuthContext } from "../context/AuthContext";
 
 export interface ExperienceCardProp {
   experience: Experience | Experience[];
 }
 
 function ExpCards({ experience }: ExperienceCardProp) {
-  const { _id, author, title, publication_date, photo } =
+  const { author, title, caption, publication_date, photo } =
     experience as Experience;
 
-  useEffect(() => {}, [experience]);
+  const { user } = useContext(AuthContext);
+
+  useEffect(() => {}, [user, experience]);
 
   return (
     <div>
-      <img src={photo} style={{ width: "20%" }} />
-      <h4>{title}</h4>
-      <p>
-        written by {author.username}, {formatDate(publication_date)}
-      </p>
-      <Link to={`${title}`} state={{ experience: experience }}>
-        View More!!
-      </Link>
+      <div className="storyCards">
+        <div className="storyCardSignle">
+          <h2>{title}</h2>
+          <div>
+            <img className="gridPhoto" src={photo} />
+          </div>
+          <p className="storyCardCaption">{caption}</p>
+          <p>
+            written by {author.username}, {formatDate(publication_date)}
+          </p>
+          <Link to={`${title}`} state={{ experience: experience }}>
+            View More!!
+          </Link>
+        </div>
+      </div>
+      <br />
     </div>
   );
 }
