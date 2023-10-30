@@ -1,24 +1,26 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import "../styles/logUp.css";
 import "../styles/Home.css";
 import { Link } from "react-router-dom";
 import { User } from "../types/customTypes";
+import { AuthContext } from "../context/AuthContext";
 
-interface LogInCredentials {
+export interface LogInCredentials {
   email: string;
   password: string;
 }
 
-interface LogInResponse {
+export interface LogInResponse {
   user: User;
   message: string;
   token: string;
 }
 
 function Login() {
-  const [loginCredentials, setLoginCredentials] =
-    useState<LogInCredentials | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { loginCredentials, setLoginCredentials, logIn } =
+    useContext(AuthContext);
+
+
   const [passwordType, setPasswordType] = useState("password");
   const [showOrHide, setShowOrHide] = useState("show");
   const changePasswordType = () => {
@@ -41,62 +43,8 @@ function Login() {
 
   const handleSubmitLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    logIn();
 
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
-
-    const urlencoded = new URLSearchParams();
-    urlencoded.append("email", loginCredentials!.email);
-    urlencoded.append("password", loginCredentials!.password);
-
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: urlencoded,
-    };
-
-    try {
-      const response = await fetch(
-        "http://localhost:5005/api/users/login",
-        requestOptions
-      );
-
-      if (response.ok) {
-        const results: LogInResponse = await response.json();
-        console.log("results.username :>> ", results);
-        const token = results.token; //Token should be added to every function for users (delete/update)
-        if (token) {
-          localStorage.setItem("token", token);
-        }
-      }
-    } catch (err) {
-      const error = err as Error;
-      console.log("error :>> ", error.message);
-    }
-  };
-
-  const isUserLoggedIn = () => {
-    const token = localStorage.getItem("token");
-
-    return token ? true : false;
-  };
-
-  useEffect(() => {
-    const isLoggedIn = isUserLoggedIn();
-
-    if (isLoggedIn) {
-      console.log("user is logged in");
-      setIsLoggedIn(true);
-    } else {
-      console.log("user is NOT logged in");
-      setIsLoggedIn(false);
-    }
-  }, [isLoggedIn]);
-
-  const logOut = () => {
-    localStorage.removeItem("token");
-    setIsLoggedIn(false);
-  };
 
   return (
     <>
@@ -152,9 +100,7 @@ function Login() {
             sign up.
           </Link>
         </p>
-        <button className="nakdButton" onClick={logOut}>
-          log out
-        </button>
+
       </div>
     </>
   );
