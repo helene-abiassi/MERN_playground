@@ -1,21 +1,25 @@
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { formatDate } from "./Functions";
+import { useNavigate } from "react-router-dom";
 
 function ProfileCard() {
-  const { user, getProfile, logOut } = useContext(AuthContext);
+  const { user, getProfile, logOut, isLoggedIn } = useContext(AuthContext);
+  const navigateTo = useNavigate();
 
 
-  useEffect(() => {
-    console.log("user :>> ", user);
+  const handleLogOut = () => {
+    logOut();
+    navigateTo("/");
+  };
+  console.log("user in PROFILE :>> ", user);
 
-    getProfile();
-  }, [user]);
+  useEffect(() => {}, [getProfile]);
 
   return (
     <div>
       <div className="profileColumns">
-        <button onClick={logOut}>log out</button>
+        <button onClick={handleLogOut}>log out</button>
         <div className="profileColumnLeft">
           <p className="inputKeys">photo:</p>
           <img style={{ width: "50%" }} src={user?.user_image} alt="" />{" "}
