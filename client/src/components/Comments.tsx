@@ -1,8 +1,12 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import { Experience } from "../types/customTypes";
+import { AuthContext } from "../context/AuthContext";
+import { formatDateAndTime } from "./Functions";
 
 function Comments({ comments }: Experience) {
-  const [user, setUser] = useState(true);
+  const { user } = useContext(AuthContext);
+
+  // const [user, setUser] = useState(true);
   // const [comments, setComments] = useState<CommentsType[] | null>(null);
   const [newComment, setNewComment] = useState({
     author: {
@@ -17,10 +21,6 @@ function Comments({ comments }: Experience) {
   //!Author not being populated
 
   console.log("comments :>> ", comments);
-  const formatDate = (date: Date): string => {
-    const formattedDate = new Date(date.getSeconds() * 1000).toLocaleString();
-    return formattedDate;
-  };
 
   const handleNewComments = (e: ChangeEvent<HTMLInputElement>) => {
     setNewComment({
@@ -73,10 +73,11 @@ function Comments({ comments }: Experience) {
       console.log("error", error);
     }
   };
+  console.log("user :>> ", user);
 
   useEffect(() => {
     setNewComment(newComment);
-  }, [comments]);
+  }, [comments, user]);
 
   return (
     <div>
@@ -111,10 +112,11 @@ function Comments({ comments }: Experience) {
         </div>
       </form>
       <div>
-        {comments.map((comment, idComment) => {
+        {comments?.map((comment, idComment) => {
           return (
             <div key={idComment}>
-              <p>{comment.author.email}</p>
+              <p>{comment.author.username}</p>
+              <p>{formatDateAndTime(comment.date)}</p>
               <p>{comment.message}</p>
             </div>
           );
