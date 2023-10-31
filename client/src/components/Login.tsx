@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import "../styles/logUp.css";
 import "../styles/Home.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { User } from "../types/customTypes";
 import { AuthContext } from "../context/AuthContext";
 
@@ -17,10 +17,12 @@ export interface LogInResponse {
 }
 
 function Login() {
-  const { loginCredentials, setLoginCredentials, logIn } =
+  const { loginCredentials, setLoginCredentials, logIn, isLoggedIn, user } =
     useContext(AuthContext);
 
-
+  // const [loginCredentials, setLoginCredentials] =
+  //   useState<LogInCredentials | null>(null);
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [passwordType, setPasswordType] = useState("password");
   const [showOrHide, setShowOrHide] = useState("show");
   const changePasswordType = () => {
@@ -33,6 +35,8 @@ function Login() {
     setShowOrHide("show");
   };
 
+  const navigateTo = useNavigate();
+
   const handleLoginInput = (e: ChangeEvent<HTMLInputElement>) => {
     console.log("e.target.name :>> ", e.target.name);
     setLoginCredentials({
@@ -44,6 +48,11 @@ function Login() {
   const handleSubmitLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     logIn();
+    navigateTo("/profile");
+
+
+  useEffect(() => {}, [isLoggedIn, user]);
+
 
 
   return (
