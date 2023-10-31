@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
+// import { Experience } from "../types/customTypes";
 import ExpCards from "./ExpCard";
 import { ExperiencesContext } from "../context/ExperiencesContext";
 
