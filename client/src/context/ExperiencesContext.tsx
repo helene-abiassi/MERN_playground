@@ -9,6 +9,7 @@ interface ExperiencesContextType {
   // loading: boolean;
   // error: string;
 }
+//!Add Query params + state var to Type above
 
 const initialContext: ExperiencesContextType = {
   experiences: [
@@ -119,6 +120,10 @@ export const ExperiencesContextProvider = (props: ProviderPropsType) => {
   ]);
 
   const [urlParams, setUrlParams] = useState("all");
+
+  // const { data, error, loading } = useMyFetch<Experience[]>(
+  //   `http://localhost:5005/api/experiences/${urlParams}`
+  // );
 
   const fetchExperiences = async () => {
     const requestOptions = {
