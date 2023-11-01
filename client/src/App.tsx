@@ -24,6 +24,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Submit from "./views/Submit";
 import { ExperiencesContextProvider } from "./context/ExperiencesContext";
 import { AuthContextProvider } from "./context/AuthContext";
+import ExperienceWithCHook from "./components/ExperienceWithCHook";
 
 function App() {
   const router = createBrowserRouter(
@@ -35,12 +36,13 @@ function App() {
           <Route path="all" element={<Experiences />} />
           <Route path="hiking" element={<Hiking />} />
           <Route path="wildlife" element={<Wildlife />} />
-          //! Do the same for all adventure types + make sure they're different,
         </Route>
         <Route
           path="experiences/:experienceTitle"
           element={<ExperienceDetails />}
         />
+        <Route path="custom" element={<ExperienceWithCHook />} />
+
         <Route path="map" element={<Map />} />
         <Route path="about" element={<About />} />
         <Route path="signup" element={<SignUp />} />
