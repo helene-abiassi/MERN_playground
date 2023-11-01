@@ -30,17 +30,18 @@ export interface User extends UserImage {
   
 
   export interface Experience extends ExperienceImage {
+    // _id:string;
     author: {
       a_id: string;
       username: string;
       email: string;
       bio: string;
-      member_since: Date;
+      member_since: Date | string;
       user_image: string;
     };
     title: string;
     caption: string;
-    publication_date: Date;
+    publication_date: Date | string;
     location: {
       country: string;
       city: string;
@@ -49,14 +50,14 @@ export interface User extends UserImage {
     };
     experienceType: string;
     text_body: string;
-    bookmarked_by:[{
+    bookmarked_by?:[{
       _id:string,
       usernam:string,
       bio:string,
-      member_since:Date,
+      member_since:Date | string,
       user_image:string
     }];
-    comments:CommentsType[]
+    comments?:CommentsType[]
 
 
   }
@@ -73,6 +74,6 @@ export interface User extends UserImage {
       username: string;
       user_image: string;
     };
-    date: Date;
+    date: Date | string;
     message: string;
   }
