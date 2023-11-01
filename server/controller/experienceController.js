@@ -222,7 +222,7 @@ const uploadPhoto = async (req, res) => {
       console.error("error", error);
     }
   } else {
-    res.status(5000).json({
+    res.status(500).json({
       error: "File type not supported",
     });
   }
