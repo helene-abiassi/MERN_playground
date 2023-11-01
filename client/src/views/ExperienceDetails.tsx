@@ -10,12 +10,30 @@ function ExperienceDetails() {
 
   const { experience } = location.state;
 
+  console.log("experience in my Details page :>> ", experience);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [experience.title]);
 
   return (
     <div>
+      <div className="expAuthorCard">
+        <h2>story by</h2>
+        <img
+          style={{
+            width: "36%",
+            height: "36%",
+            marginLeft: "70px",
+            borderRadius: "50%",
+          }}
+          src={experience.author.user_image}
+          alt={experience.author.username}
+        />
+        <h4>{experience.author.username}</h4>
+        <p>{experience.author.bio}</p>
+        <p>member since: {formatDate(experience.author.member_since)}</p>
+      </div>
       <div className="detailsSection">
         <BackButton />
         <h2>{experience.title}</h2>
@@ -116,17 +134,7 @@ function ExperienceDetails() {
           </svg>
         </p>
         <hr />
-        <p>
-          {" "}
-          {/* {experience.comments.map((comment: string, idComment: number) => {
-            return (
-              <div key={idComment}>
-                <p>{comment.message}</p>
-              </div>
-            );
-          })} */}
-        </p>
-        <hr />
+
         <p>{experience.text_body}</p>
         {experience.photo_body.map((photo: string, idPhoto: number) => {
           return (
@@ -136,6 +144,7 @@ function ExperienceDetails() {
           );
         })}
       </div>
+
       <Comments comments={experience.comments} />
     </div>
   );
