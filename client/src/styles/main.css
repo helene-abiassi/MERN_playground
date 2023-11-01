@@ -62,9 +62,31 @@ nav {
   height: 3.5rem;
 }
 
+.loaderImage {
+  animation-name: fly;
+  animation-duration: 5s;
+  height: 15rem;
+}
+
 .mainLogo:hover {
   animation-name: shake;
   animation-duration: 3s;
+}
+
+@keyframes fly {
+  25% {
+    transform: rotate(30deg);
+    transform-origin: bottom;
+  }
+
+  50% {
+    transform: rotate(-30deg);
+    transform-origin: bottom;
+  }
+  75% {
+    transform: rotate(30deg);
+    transform-origin: bottom;
+  }
 }
 
 @keyframes shake {
