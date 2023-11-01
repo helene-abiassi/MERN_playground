@@ -59,7 +59,6 @@ const uploadImage = async (req, res) => {
   //Upload the file to cloudinary /if/ there is a file in req
   if (req.file) {
     try {
-      // Upload the image
       const uploadedImage = await cloudinary.uploader.upload(req.file.path, {
         folder: "voyageApp/userphotos",
       });
@@ -68,12 +67,11 @@ const uploadImage = async (req, res) => {
         message: "Image uploaded successfully",
         user_image: uploadedImage.secure_url,
       });
-      // Save the photo in the userphoto collection
     } catch (error) {
       console.error("error", error);
     }
   } else {
-    res.status(5000).json({
+    res.status(500).json({
       error: "File type not supported",
     });
   }
