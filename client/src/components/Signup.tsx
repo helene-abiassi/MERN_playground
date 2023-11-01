@@ -115,7 +115,6 @@ function Signup() {
   }, []);
 
   // <Navigate to={"/profile"} />
-  //! use Navigate hook to redirect user to profile page after signin (with delay)
 
   return (
     <>
