@@ -17,8 +17,14 @@ export interface LogInResponse {
 }
 
 function Login() {
-  const { loginCredentials, setLoginCredentials, logIn, isLoggedIn, user } =
-    useContext(AuthContext);
+  const {
+    loginCredentials,
+    setLoginCredentials,
+    logIn,
+    isLoggedIn,
+    setIsLoggedIn,
+    user,
+  } = useContext(AuthContext);
 
   // const [loginCredentials, setLoginCredentials] =
   //   useState<LogInCredentials | null>(null);
@@ -49,11 +55,11 @@ function Login() {
     e.preventDefault();
     logIn();
     navigateTo("/profile");
+  };
 
+  // const isUserLoggedIn = () => {
 
   useEffect(() => {}, [isLoggedIn, user]);
-
-
 
   return (
     <>
@@ -109,7 +115,9 @@ function Login() {
             sign up.
           </Link>
         </p>
-
+        {/* <button className="nakdButton" onClick={logOut}>
+          log out
+        </button> */}
       </div>
     </>
   );
