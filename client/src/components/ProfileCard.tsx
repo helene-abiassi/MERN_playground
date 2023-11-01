@@ -7,6 +7,45 @@ function ProfileCard() {
   const { user, getProfile, logOut, isLoggedIn } = useContext(AuthContext);
   const navigateTo = useNavigate();
 
+  // const getProfile = async () => {
+  //   const token = localStorage.getItem("token");
+
+  //   if (!token) {
+  //     alert("you need to log in first!");
+  //     //Redirect user to login/ protected route page
+  //   }
+  //   if (token) {
+  //     const myHeaders = new Headers();
+  //     myHeaders.append("Authorization", `Bearer ${token}`);
+
+  //     const requestOptions = {
+  //       method: "GET",
+  //       headers: myHeaders,
+  //     };
+
+  //     try {
+  //       const response = await fetch(
+  //         "http://localhost:5005/api/users/profile",
+  //         requestOptions
+  //       );
+
+  //       if (!response.ok) {
+  //         alert(response.statusText);
+  //       }
+
+  //       if (response.ok) {
+  //         const result = await response.json();
+  //         console.log("result to get my user profile :>> ", result);
+  //         const user = result.userProfile as User;
+
+  //         setUser(user);
+  //       }
+  //     } catch (err) {
+  //       const error = err as Error;
+  //       console.log("error :>> ", error.message);
+  //     }
+  //   }
+  // };
 
   const handleLogOut = () => {
     logOut();
