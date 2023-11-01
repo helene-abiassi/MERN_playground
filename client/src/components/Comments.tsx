@@ -6,8 +6,6 @@ import { formatDateAndTime } from "./Functions";
 function Comments({ comments }: Experience) {
   const { user } = useContext(AuthContext);
 
-  // const [user, setUser] = useState(true);
-  // const [comments, setComments] = useState<CommentsType[] | null>(null);
   const [newComment, setNewComment] = useState({
     author: {
       _id: "",
@@ -18,7 +16,6 @@ function Comments({ comments }: Experience) {
     date: new Date(),
     message: "",
   });
-  //!Author not being populated
 
   console.log("comments :>> ", comments);
 
@@ -28,10 +25,9 @@ function Comments({ comments }: Experience) {
       [e.target.name]: e.target.value,
     });
   };
-  //! COMMENTS NOT UPDATING ON DB + PAGE
   const handleSubmitComment = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Add if (existingUser)
+    ///! Add if (existingUser)
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
 
@@ -60,9 +56,6 @@ function Comments({ comments }: Experience) {
     }
   };
 
-  const editComment = () => {
-    //TODO -
-  };
   const deleteComment = () => {
     //TODO -
     try {
