@@ -18,7 +18,6 @@ const experienceSchema = new mongoose.Schema({
   },
   photo: {
     type: String,
-    required: true,
     default:
       "https://res.cloudinary.com/dfm1r4ikr/image/upload/v1697311768/voyageApp/expphoto_treptowerPark_hrlyk7.png",
   },
