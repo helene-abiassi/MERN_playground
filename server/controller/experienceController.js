@@ -11,13 +11,15 @@ const getAllExperiences = async (req, res) => {
       path: "bookmarked_by",
       select: ["username", "bio", "member_since", "user_image"],
     },
-    { path: "comments" },
+    {
+      path: "comments",
+      populate: { path: "author", select: ["email", "username", "user_image"] },
+    },
     {
       path: "author",
       select: ["username", "email", "bio", "member_since", "user_image"],
     },
   ]);
-  // console.log("allExperiences :>> ", allExperiences);
 
   res.json({
     number: allExperiences.length,
@@ -128,7 +130,6 @@ const getExperiencesByCity = async (req, res) => {
       "location.city": city,
       "location.country": country,
     });
-    // console.log("experienceByCity :>> ", experienceByCity);
 
     if (experienceByCity.length > 0) {
       res.status(200).json({
