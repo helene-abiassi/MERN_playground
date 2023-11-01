@@ -6,3 +6,35 @@
   min-width: 600px;
   min-height: 500px;
 }
+
+.expTypeNavbar {
+  color: white;
+  background-color: transparent;
+}
+
+.storyCards {
+  background-color: #d7c6ac;
+  width: auto;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.gridPhoto {
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+}
+
+.storyCardCaption {
+  width: 20rem;
+}
+
+.expAuthorCard {
+  border-radius: 10px;
+  background: #fa9397;
+  width: 20rem;
+  box-shadow: 20px 20px #b1d573;
+}
