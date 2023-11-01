@@ -1,8 +1,9 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 // import { Experience } from "../types/customTypes";
 import ExpCards from "./ExpCard";
 import { ExperiencesContext } from "../context/ExperiencesContext";
+import Loader from "./Loader";
 
 export interface SearchProps {
   urlParams: string | null;
@@ -11,7 +12,6 @@ export interface SearchProps {
 function ExpLayout() {
   const { experiences, fetchExperiences, urlParams } =
     useContext(ExperiencesContext);
-
 
   useEffect(() => {
     fetchExperiences();
