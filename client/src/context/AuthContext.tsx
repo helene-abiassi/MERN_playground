@@ -13,6 +13,7 @@ interface AuthContextType {
   setLoginCredentials: (loginCredentials: LogInCredentials) => void;
   logOut: () => void;
   getProfile: () => void;
+  authenticateUser: () => void;
 }
 
 interface AuthContextProviderProps {
@@ -24,12 +25,13 @@ const AuthInitContext = {
   loginCredentials: null,
   isLoading: true,
   isLoggedIn: false,
-  setIsLoggedIn: (isLoggedIn: false) => console.log("context not initialized"),
+  setIsLoggedIn: () => console.log("context not initialized"),
   setUser: () => console.log("context not initialized"),
   logIn: () => console.log("context not initialized"),
   setLoginCredentials: () => console.log("context not initialized"),
   logOut: () => console.log("context not initialized"),
   getProfile: () => console.log("context not initialized"),
+  authenticateUser: () => console.log("context not initialized"),
 };
 
 export const AuthContext = createContext<AuthContextType>(AuthInitContext);
@@ -68,18 +70,16 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         const token = results.token; //Token should be added to every function4 users (delete/update)
         if (token) {
           localStorage.setItem("token", token);
-          setUser(user);
+          setUser(results.user);
+          console.log("user is set after login");
           setIsLoggedIn(true);
-
-        
         }
       }
     } catch (err) {
       const error = err as Error;
       console.log("error :>> ", error.message);
     }
-  }; //Redirect user to login/ protected route page
-  //!Navigate hook cannot be imported
+  };
 
   const getProfile = async () => {
     const token = localStorage.getItem("token");
@@ -104,7 +104,6 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         );
 
         if (!response.ok) {
-          alert(response.statusText);
           setIsLoading(false);
         }
 
@@ -124,8 +123,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         console.log("error :>> ", error.message);
       }
     }
-  }; 
-
+  };
   const isUserLoggedIn = () => {
     const token = localStorage.getItem("token");
 
@@ -135,14 +133,8 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   const logOut = () => {
     localStorage.removeItem("token");
     setIsLoggedIn(false);
+    setUser(null);
   };
-
-  //call here a function that:
-  //1st get the token from the localstorage
-  //2nd attach the token to a fetch request
-  //3rd send request to your backend
-  //4rd in the response from the request, recieves the User information
-  //5th sets the User state variable with that info
 
   const authenticateUser = async () => {
     const token = localStorage.getItem("token");
@@ -164,10 +156,10 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
 
         if (response.ok) {
           const result = await response.json();
-          console.log("result to get my user profile :>> ", result);
+          console.log("result to get my user profile :>> ", result); //This works
           const user = result.userProfile as User;
-
           setUser(user);
+          console.log("user is set");
           setIsLoggedIn(true);
           setIsLoading(false);
         } else {
@@ -181,26 +173,17 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         console.log("error :>> ", error.message);
       }
     } else {
+      console.log("there is no token!");
       setIsLoggedIn(false);
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    setIsLoading(true);
-    const isLoggedIn = isUserLoggedIn();
+    console.log("checking if user is logged in");
 
-    if (isLoggedIn) {
-      console.log("user is logged in");
-      setIsLoggedIn(true);
-      setIsLoading(false);
-      authenticateUser();
-    } else {
-      console.log("user is NOT logged in");
-      setIsLoggedIn(false);
-      setIsLoading(false);
-    }
-  }, []);
+    authenticateUser();
+  }, [user?.username]);
 
   return (
     <AuthContext.Provider
@@ -214,6 +197,8 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         setLoginCredentials,
         isLoading,
         setIsLoggedIn,
+        isLoggedIn,
+        authenticateUser,
       }}
     >
       {children}
