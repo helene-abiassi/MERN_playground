@@ -1,18 +1,22 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import { Experience, ExperienceImage } from "../types/customTypes";
 import "../styles/Home.css";
 import "../styles/Experiences.css";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 function SubmitExperience() {
   const [displayPhoto, setDisplayPhoto] = useState<File | string>("");
   const [photoAlbum, setPhotoAlbum] = useState<File[] | string[]>([]);
 
+  const { user, isLoggedIn, authenticateUser } = useContext(AuthContext);
+  console.log("user on my Submit page :>> ", user);
+
   const [newExperience, setNewExperience] = useState<Experience>({
     author: {
-      a_id: "652ad65dfef8bfeece28f7cb",
+      a_id: "",
       username: "",
-      email: "bobolechien@test.com",
+      email: "",
       bio: "",
       member_since: Date(),
       user_image: "",
@@ -130,7 +134,11 @@ function SubmitExperience() {
 
   const handleSubmitExperience = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("newExperience :>> ", newExperience);
+
+    if (!isLoggedIn) {
+      console.error("You need to log in first");
+      return;
+    }
 
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
@@ -138,8 +146,8 @@ function SubmitExperience() {
     const photoBodyJSON = JSON.stringify(newExperience.photo_body);
 
     const urlencoded = new URLSearchParams();
-    urlencoded.append("a_id", newExperience.author.a_id);
-    urlencoded.append("email", newExperience.author.email);
+    // urlencoded.append("a_id", newExperience.author.a_id); //!THIS DOESNT
+    urlencoded.append("email", user?.email); //!APPEND MY USER TO NEW EXP
     urlencoded.append("title", newExperience.title);
     urlencoded.append("caption", newExperience.caption);
     urlencoded.append("photo", newExperience.photo);
@@ -169,12 +177,13 @@ function SubmitExperience() {
     }
     alert("yey!"); //!Replace with modal/toast ++ redirect to story page
     navigateTo("/experiences");
+    console.log("newExperience :>> ", newExperience);
   };
 
   useEffect(() => {
     setNewExperience(newExperience);
     console.log("newExperience :>> ", newExperience);
-  }, []);
+  }, [isLoggedIn]);
 
   //Do delete + edit experience (not sure where// show in grid and details)
   return (
