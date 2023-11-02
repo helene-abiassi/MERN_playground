@@ -3,19 +3,23 @@ import { Experience } from "../types/customTypes";
 import { AuthContext } from "../context/AuthContext";
 import { formatDateAndTime } from "./Functions";
 
-function Comments({ comments }: Experience) {
+function Comments({ comments, _id }: Experience) {
   const { user } = useContext(AuthContext);
+
+  console.log("_id in COMMENTS:>> ", _id);
 
   const [newComment, setNewComment] = useState({
     author: {
-      _id: "",
-      email: "",
-      username: "",
-      user_image: "",
+      _id: user?._id,
+      email: user?.email,
+      username: user?.username,
+      user_image: user?.user_image,
     },
     date: new Date(),
     message: "",
   });
+
+  const [textInput, setTextInput] = useState("");
 
   console.log("comments :>> ", comments);
 
@@ -25,39 +29,48 @@ function Comments({ comments }: Experience) {
       [e.target.name]: e.target.value,
     });
   };
+
   const handleSubmitComment = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    ///! Add if (existingUser)
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
 
-    const urlencoded = new URLSearchParams();
-    urlencoded.append("_id", newComment.author._id);
-    urlencoded.append("email", newComment.author.email);
-    urlencoded.append("username", newComment.author.username);
-    urlencoded.append("user_image", newComment.author.user_image);
-    urlencoded.append("message", newComment.message);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You need to log in first!");
+    }
+    console.log("token :>> ", token);
+    if (token) {
+      console.log("newComment :>> ", newComment);
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+      myHeaders.append("Authorization", `Bearer ${token}`);
 
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: urlencoded,
-    };
+      const urlencoded = new URLSearchParams();
+      urlencoded.append("_id", user!._id);
+      urlencoded.append("email", user!.email);
+      urlencoded.append("username", user!.username);
+      urlencoded.append("user_image", user!.user_image);
+      urlencoded.append("message", newComment.message);
 
-    try {
-      const response = await fetch(
-        "http://localhost:5005/api/comments/commentsubmission",
-        requestOptions
-      );
-      const result = await response.json();
-      console.log("result :>> ", result);
-    } catch (error) {
-      console.log("error :>> ", error);
+      const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: urlencoded,
+      };
+      try {
+        const response = await fetch(
+          `http://localhost:5005/api/experiences/experiences/${_id}/comments`,
+          requestOptions
+        );
+
+        console.log("results for posting comments :>> ", response);
+      } catch (error) {
+        console.log("error :>> ", error);
+      }
     }
   };
 
+  //TODO -
   const deleteComment = () => {
-    //TODO -
     try {
       if (window.confirm("Are you SURE you want to delete your comment?")) {
         console.log("successfull :>> ", "deletedMessage");
