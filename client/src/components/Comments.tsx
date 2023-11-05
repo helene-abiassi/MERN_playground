@@ -1,12 +1,15 @@
 import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
-import { Experience } from "../types/customTypes";
+import { CommentsType, Experience } from "../types/customTypes";
 import { AuthContext } from "../context/AuthContext";
 import { formatDateAndTime } from "./Functions";
+import { ExperiencesContext } from "../context/ExperiencesContext";
 
 function Comments({ comments, _id }: Experience) {
   const { user } = useContext(AuthContext);
+  const { fetchExperiences } = useContext(ExperiencesContext);
 
-  console.log("_id in COMMENTS:>> ", _id);
+  const experienceID = _id;
+  console.log("experienceID on commentsComp:>> ", experienceID);
 
   const [newComment, setNewComment] = useState({
     author: {
@@ -17,18 +20,21 @@ function Comments({ comments, _id }: Experience) {
     },
     date: new Date(),
     message: "",
+    experienceID: experienceID,
   });
-
+  const [updatedComments, setUpdatedComments] = useState<CommentsType[] | null>(
+    null
+  );
   const [textInput, setTextInput] = useState("");
 
-  console.log("comments :>> ", comments);
-
   const handleNewComments = (e: ChangeEvent<HTMLInputElement>) => {
+    setTextInput(e.target.value);
     setNewComment({
       ...newComment,
       [e.target.name]: e.target.value,
     });
   };
+
 
   const handleSubmitComment = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,7 +43,7 @@ function Comments({ comments, _id }: Experience) {
     if (!token) {
       alert("You need to log in first!");
     }
-    console.log("token :>> ", token);
+
     if (token) {
       console.log("newComment :>> ", newComment);
       const myHeaders = new Headers();
@@ -50,6 +56,7 @@ function Comments({ comments, _id }: Experience) {
       urlencoded.append("username", user!.username);
       urlencoded.append("user_image", user!.user_image);
       urlencoded.append("message", newComment.message);
+      urlencoded.append("experience", experienceID);
 
       const requestOptions = {
         method: "POST",
@@ -63,27 +70,59 @@ function Comments({ comments, _id }: Experience) {
         );
 
         console.log("results for posting comments :>> ", response);
+
+        const data = await response.json();
+        console.log("data for my new comment :>> ", data);
+        if (response.ok) {
+          const newComment: CommentsType = data.comment;
+        } else {
+          console.error("Error posting comment:", data.message);
+        }
       } catch (error) {
         console.log("error :>> ", error);
       }
     }
+    setTextInput("");
   };
 
   //TODO -
-  const deleteComment = () => {
+  const handleDeleteComment = async (commentId: string) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.log("Token not found");
+    }
+
+    const myHeaders = new Headers();
+    myHeaders.append("Authorization", `Bearer ${token}`);
+
+    const urlencoded = new URLSearchParams();
+
+    const requestOptions = {
+      method: "DELETE",
+      headers: myHeaders,
+      body: urlencoded,
+    };
     try {
-      if (window.confirm("Are you SURE you want to delete your comment?")) {
-        console.log("successfull :>> ", "deletedMessage");
+      const response = await fetch(
+        `http://localhost:5005/api/experiences/deletecomment/${commentId}`,
+        requestOptions
+      );
+      if (response.ok) {
+        console.log("comment deleted successfully!");
+      } else {
+        console.log("error with response when deleting comment");
       }
     } catch (error) {
-      console.log("error", error);
+      console.log("error when deleting comment:>> ", error);
     }
   };
-  console.log("user :>> ", user);
+  // if (window.confirm("Are you SURE you want to delete your comment?"))
 
   useEffect(() => {
-    setNewComment(newComment);
-  }, [comments, user]);
+    // fetchComments();
+    // fetchExperiences();
+  }, []);
 
   return (
     <div>
@@ -95,13 +134,14 @@ function Comments({ comments, _id }: Experience) {
             type="text"
             placeholder="Leave a comment..."
             onChange={handleNewComments}
+            value={textInput}
           />
           <button
             style={{ backgroundColor: "white" }}
             className="nakdButton"
             type="submit"
           >
-            submit{" "}
+            submit
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="25"
@@ -117,16 +157,44 @@ function Comments({ comments, _id }: Experience) {
           </button>
         </div>
       </form>
-      <div>
-        {comments?.map((comment, idComment) => {
-          return (
-            <div key={idComment}>
-              <p>{comment.author.username}</p>
-              <p>{formatDateAndTime(comment.date)}</p>
-              <p>{comment.message}</p>
-            </div>
-          );
-        })}
+
+      <div style={{ backgroundColor: "white" }}>
+        {comments ? (
+          <div>
+            {comments.length > 0 ? (
+              comments.map((comment, commentIndex) => {
+                return (
+                  <div className="singleComment" key={commentIndex}>
+                    <div className="singleCommentHeader">
+                      <h4>{comment.author.username}</h4>
+
+                      <p>{formatDateAndTime(comment.date)}</p>
+                    </div>
+                    <div className="commentBody">
+                      <p className="commentMsg">{comment.message}</p>
+                      {user?.email === comment.author.email && (
+                        <button
+                          onClick={() => {
+                            handleDeleteComment(comment._id);
+                          }}
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <>
+                <p style={{ color: "black" }}>
+                  Be the first one to leave a comment!
+                </p>
+                <br />
+              </>
+            )}
+          </div>
+        ) : null}
       </div>
     </div>
   );
