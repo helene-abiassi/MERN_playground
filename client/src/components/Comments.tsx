@@ -6,7 +6,7 @@ import { ExperiencesContext } from "../context/ExperiencesContext";
 
 function Comments({ comments, _id }: Experience) {
   const { user } = useContext(AuthContext);
-  const { fetchExperiences } = useContext(ExperiencesContext);
+  // const { fetchExperiences } = useContext(ExperiencesContext);
 
   const experienceID = _id;
   console.log("experienceID on commentsComp:>> ", experienceID);
@@ -34,7 +34,22 @@ function Comments({ comments, _id }: Experience) {
       [e.target.name]: e.target.value,
     });
   };
-
+  //Try moving everything to context
+  const fetchComments = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5005/api/comments/experience/${_id}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        console.log("data :>> ", data);
+        setUpdatedComments(data.comments);
+        console.log("updatedComments :>> ", data.comments);
+      }
+    } catch (error) {
+      console.log("error :>> ", error);
+    }
+  };
 
   const handleSubmitComment = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -85,7 +100,6 @@ function Comments({ comments, _id }: Experience) {
     setTextInput("");
   };
 
-  //TODO -
   const handleDeleteComment = async (commentId: string) => {
     const token = localStorage.getItem("token");
 
@@ -103,24 +117,29 @@ function Comments({ comments, _id }: Experience) {
       headers: myHeaders,
       body: urlencoded,
     };
+
     try {
-      const response = await fetch(
-        `http://localhost:5005/api/experiences/deletecomment/${commentId}`,
-        requestOptions
-      );
-      if (response.ok) {
-        console.log("comment deleted successfully!");
-      } else {
-        console.log("error with response when deleting comment");
+      if (window.confirm("Are you SURE you want to delete your comment?")) {
+        const response = await fetch(
+          `http://localhost:5005/api/experiences/deletecomment/${commentId}`,
+          requestOptions
+        );
+
+        console.log("Response status:", response.status); // Log the response status
+
+        if (response.ok) {
+          console.log("comment deleted successfully!");
+        } else {
+          console.log("error with response when deleting comment");
+        }
       }
     } catch (error) {
       console.log("error when deleting comment:>> ", error);
     }
   };
-  // if (window.confirm("Are you SURE you want to delete your comment?"))
 
   useEffect(() => {
-    // fetchComments();
+    fetchComments();
     // fetchExperiences();
   }, []);
 
@@ -159,42 +178,38 @@ function Comments({ comments, _id }: Experience) {
       </form>
 
       <div style={{ backgroundColor: "white" }}>
-        {comments ? (
-          <div>
-            {comments.length > 0 ? (
-              comments.map((comment, commentIndex) => {
-                return (
-                  <div className="singleComment" key={commentIndex}>
-                    <div className="singleCommentHeader">
-                      <h4>{comment.author.username}</h4>
-
-                      <p>{formatDateAndTime(comment.date)}</p>
-                    </div>
-                    <div className="commentBody">
-                      <p className="commentMsg">{comment.message}</p>
-                      {user?.email === comment.author.email && (
-                        <button
-                          onClick={() => {
-                            handleDeleteComment(comment._id);
-                          }}
-                        >
-                          Delete
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })
-            ) : (
-              <>
-                <p style={{ color: "black" }}>
-                  Be the first one to leave a comment!
-                </p>
-                <br />
-              </>
-            )}
-          </div>
-        ) : null}
+        {(updatedComments && updatedComments.length > 0) ||
+        (comments && comments.length > 0) ? (
+          (updatedComments ? updatedComments : comments!).map(
+            (comment, index) => (
+              <div key={index}>
+                <span>
+                  <span>
+                    {/* <img src={comment.author.user_image} /> */}
+                    <p>{comment.author.username}</p>
+                  </span>
+                  <span>
+                    <p>{formatDateAndTime(comment.date)}</p>
+                  </span>
+                </span>
+                <span>
+                  <p>{comment.message}</p>
+                </span>
+                {user?.email === comment.author.email && (
+                  <button
+                    onClick={() => {
+                      handleDeleteComment(comment._id);
+                    }}
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
+            )
+          )
+        ) : (
+          <p>Be the first one to leave a comment</p>
+        )}{" "}
       </div>
     </div>
   );
