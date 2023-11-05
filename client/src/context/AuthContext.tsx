@@ -13,6 +13,7 @@ interface AuthContextType {
   setLoginCredentials: (loginCredentials: LogInCredentials) => void;
   logOut: () => void;
   getProfile: () => void;
+  deleteProfile: (userID: string) => void;
   authenticateUser: () => void;
 }
 
@@ -31,6 +32,7 @@ const AuthInitContext = {
   setLoginCredentials: () => console.log("context not initialized"),
   logOut: () => console.log("context not initialized"),
   getProfile: () => console.log("context not initialized"),
+  deleteProfile: () => console.log("context not initialized"),
   authenticateUser: () => console.log("context not initialized"),
 };
 
@@ -66,8 +68,8 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
 
       if (response.ok) {
         const results: LogInResponse = await response.json();
-        console.log("results.username :>> ", results);
-        const token = results.token; //Token should be added to every function4 users (delete/update)
+        console.log("results for login response :>> ", results);
+        const token = results.token;
         if (token) {
           localStorage.setItem("token", token);
           setUser(results.user);
@@ -136,6 +138,39 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     setUser(null);
   };
 
+  const deleteProfile = async (userID: string) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.log("No token available!");
+    }
+
+    const myHeaders = new Headers();
+    myHeaders.append("Authorization", `Bearer ${token}`);
+
+    const requestOptions = {
+      method: "DELETE",
+      headers: myHeaders,
+    };
+
+    try {
+      const response = await fetch(
+        `http://localhost:5005/api/users//deleteuser/${userID}`,
+        requestOptions
+      );
+      console.log("Response status:", response.status);
+
+      if (response.ok) {
+        console.log("profile deleted successfully!");
+        setUser(null);
+      } else {
+        console.log("error with response when deleting profile");
+      }
+    } catch (error) {
+      console.log("error when trying to delete a user :>> ", error);
+    }
+  };
+
   const authenticateUser = async () => {
     const token = localStorage.getItem("token");
 
@@ -199,6 +234,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         setIsLoggedIn,
         isLoggedIn,
         authenticateUser,
+        deleteProfile,
       }}
     >
       {children}
