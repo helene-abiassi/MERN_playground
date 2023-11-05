@@ -1,16 +1,55 @@
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useContext, useEffect } from "react";
 import "../styles/DetailsPage.css";
 import Comments from "../components/Comments";
 import BackButton from "../components/BackButton";
 import { formatDate } from "../components/Functions";
+import { AuthContext } from "../context/AuthContext";
 
 function ExperienceDetails() {
   const location = useLocation();
-
   const { experience } = location.state;
 
+  const { user } = useContext(AuthContext);
+
+  const navigateTo = useNavigate();
+
   console.log("experience in my Details page :>> ", experience);
+  console.log("experience._id in Details :>> ", experience._id);
+
+  const handleDeleteExperience = async (experienceId: string) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.log("Token not found!");
+    }
+    const myHeaders = new Headers();
+    myHeaders.append("Authorization", `Bearer ${token}`);
+
+    const requestOptions = {
+      method: "DELETE",
+      headers: myHeaders,
+    };
+
+    try {
+      if (window.confirm("Are you SURE you want to delete your submission?")) {
+        const response = await fetch(
+          `http://localhost:5005/api/experiences/deleteexperience/${experienceId}`,
+          requestOptions
+        );
+        console.log("Response status:", response.status);
+
+        if (response.ok) {
+          console.log("experience deleted successfully!");
+          navigateTo("/experiences");
+        } else {
+          console.log("error with response when deleting experience");
+        }
+      }
+    } catch (error) {
+      console.log("error when deleting experience:>> ", error);
+    }
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -44,6 +83,16 @@ function ExperienceDetails() {
         alt=""
       />
       <div className="textBox">
+        {user?.email === experience.author.email && (
+          <button
+            onClick={() => {
+              handleDeleteExperience(experience._id);
+            }}
+          >
+            Delete
+          </button>
+        )}
+
         <p>{experience.caption}</p>
         <p>{formatDate(experience.publication_date)}</p>
 
@@ -145,7 +194,7 @@ function ExperienceDetails() {
         })}
       </div>
 
-      <Comments comments={experience.comments} />
+      <Comments comments={experience.comments} _id={experience._id} />
     </div>
   );
 }
