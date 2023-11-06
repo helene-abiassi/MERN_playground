@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
@@ -7,11 +7,11 @@ function NavBar() {
 
   console.log("user :>> ", user);
 
-  useEffect(() => {
-    console.log("user in PROFILE :>> ", user);
-    console.log("isLoggedIn :>> ", isLoggedIn);
-    // setIsLoggedIn(true);
-  }, [isLoggedIn]);
+  // useEffect(() => {
+  //   console.log("user in PROFILE :>> ", user);
+  //   console.log("isLoggedIn :>> ", isLoggedIn);
+  //   // setIsLoggedIn(true);
+  // }, [isLoggedIn]);
 
   return (
     <>
