@@ -259,6 +259,129 @@ const uploadMultiplePhotos = async (req, res) => {
   }
 };
 
+const submitComment = async (req, res) => {
+  const experienceID = req.params._id;
+  console.log("experienceID :>> ", experienceID);
+  console.log("req.user :>> ", req.user);
+  console.log("req.body :>> ", req.body);
+
+  try {
+    const existingUser = await userModel.findOne({ email: req.body.email });
+    console.log("existingUser :>> ", existingUser);
+    if (existingUser) {
+      try {
+        const newComment = new commentModel({
+          author: existingUser._id,
+          message: req.body.message,
+          experience: experienceID,
+        });
+        const savedComment = await newComment.save();
+
+        const experience = await experienceModel.findOneAndUpdate(
+          { _id: experienceID },
+          {
+            $push: { comments: savedComment },
+          },
+          { new: true }
+        );
+
+        res.status(201).json({
+          message: "Comment posted successfully",
+          comment: savedComment,
+        });
+      } catch (error) {
+        console.error("error leaving comment:", error);
+        res.status(500).json({
+          message: "Something went wrong when trying to leave a comment",
+        });
+      }
+    } else {
+      res.status(401).json({
+        message: "You need to be logged in to leave a comment",
+      });
+    }
+  } catch (error) {
+    console.error("error:", error);
+    res.status(500).json({
+      message: "Oh no! Something went wrong!",
+    });
+  }
+};
+
+const deleteExperience = async (req, res) => {
+  const experienceId = req.params._id;
+
+  try {
+    if (!experienceId) {
+      return res.status(400).json({
+        msg: "experienceId is required in the URL parameter",
+      });
+    }
+
+    const deletedExperience = await experienceModel.findByIdAndDelete(
+      experienceId
+    );
+
+    if (!deletedExperience) {
+      return res.status(404).json({
+        msg: "Experience not found",
+      });
+    }
+
+    res.status(200).json({
+      msg: "Experience deleted successfully",
+      experience: deletedExperience,
+    });
+  } catch (error) {
+    res.status(500).json({
+      msg: "Something went wrong",
+      error: error,
+    });
+  }
+};
+
+const deleteComment = async (req, res) => {
+  const commentId = req.params._id;
+
+  try {
+    if (!commentId) {
+      return res.status(400).json({
+        msg: "CommentId is required in the URL parameter",
+      });
+    }
+
+    const deletedComment = await commentModel.findByIdAndDelete(commentId);
+
+    if (!deletedComment) {
+      return res.status(404).json({
+        msg: "Comment not found in the comments collection",
+      });
+    }
+
+    const experience = await experienceModel.findByIdAndUpdate(
+      deletedComment.experience,
+      { $pull: { comments: commentId } },
+      { new: true }
+    );
+
+    if (!experience) {
+      return res.status(404).json({
+        msg: "Experience not found",
+      });
+    }
+
+    res.status(200).json({
+      msg: "Comment deleted successfully",
+      experience,
+    });
+  } catch (error) {
+    res.status(500).json({
+      msg: "Something went wrong",
+      error: error,
+    });
+  }
+};
+
 export {
   getAllExperiences,
   getExperiencesByType,
@@ -268,5 +391,7 @@ export {
   submitExperience,
   uploadPhoto,
   uploadMultiplePhotos,
-  // getCommentsByExperienceId,
+  submitComment,
+  deleteComment,
+  deleteExperience,
 };
