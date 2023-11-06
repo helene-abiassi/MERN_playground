@@ -59,6 +59,7 @@ const uploadImage = async (req, res) => {
   //Upload the file to cloudinary /if/ there is a file in req
   if (req.file) {
     try {
+      // Upload the image
       const uploadedImage = await cloudinary.uploader.upload(req.file.path, {
         folder: "voyageApp/userphotos",
       });
@@ -67,6 +68,7 @@ const uploadImage = async (req, res) => {
         message: "Image uploaded successfully",
         user_image: uploadedImage.secure_url,
       });
+      // Save the photo in the userphoto collection
     } catch (error) {
       console.error("error", error);
     }
@@ -93,6 +95,7 @@ const signUp = async (req, res) => {
       } else {
         try {
           const newUser = new userModel({
+            // _id: req.body._id,
             username: req.body.username,
             email: req.body.email,
             password: hashedPassword,
@@ -106,6 +109,7 @@ const signUp = async (req, res) => {
           res.status(201).json({
             message: "New user registered",
             user: {
+              _id: savedUser._id,
               username: savedUser.username,
               email: savedUser.email,
               user_image: savedUser.user_image,
@@ -154,6 +158,7 @@ const logIn = async (req, res) => {
           res.status(200).json({
             message: "login success",
             user: {
+              _id: existingUser._id,
               username: existingUser.username,
               email: existingUser.email,
               user_image: existingUser.user_image,
@@ -182,6 +187,7 @@ const getProfile = async (req, res) => {
   if (req.user) {
     res.status(200).json({
       userProfile: {
+        _id: req.user._id,
         username: req.user.username,
         email: req.user.email,
         user_image: req.user.user_image,
@@ -199,4 +205,75 @@ const getProfile = async (req, res) => {
   }
 };
 
-export { uploadImage, signUp, getAllUsers, getUserById, logIn, getProfile };
+const deleteUser = async (req, res) => {
+  const userId = req.params._id;
+
+  try {
+    if (!userId) {
+      return res.status(400).json({
+        msg: "userId is required in the URL parameter",
+      });
+    }
+
+    const deletedUser = await userModel.findByIdAndDelete(userId);
+
+    if (!deletedUser) {
+      return res.status(404).json({
+        msg: "Experience not found",
+      });
+    }
+
+    res.status(200).json({
+      msg: "User deleted successfully",
+      user: deletedUser,
+    });
+  } catch (error) {
+    res.status(500).json({
+      msg: "Something went wrong",
+      error: error,
+    });
+  }
+};
+
+const updateUser = async (req, res) => {
+  const userId = req.params._id;
+
+  const filter = { _id: userId };
+
+  const elementName = req.body.elementName;
+  const elementValue = req.body.elementValue;
+  const update = { [`${elementName}`]: elementValue };
+
+  if (!userId) {
+    return res.status(400).json({
+      msg: "userId is required in the URL parameter",
+    });
+  }
+  try {
+    const updatedUser = await userModel.findByIdAndUpdate(filter, update, {
+      new: true,
+    });
+
+    console.log("updatedUser :>> ", updatedUser);
+
+    res.status(200).json({
+      msg: "User updated successfully",
+    });
+  } catch (error) {
+    console.log("error when trying to update user :>> ", error);
+  }
+};
+
+const updatePhoto = async (req, res) => {};
+
+export {
+  uploadImage,
+  signUp,
+  getAllUsers,
+  getUserById,
+  logIn,
+  getProfile,
+  deleteUser,
+  updateUser,
+  updatePhoto,
+};
