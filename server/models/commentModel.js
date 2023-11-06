@@ -14,6 +14,10 @@ const commentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  experience: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "experience",
+  },
 });
 
 const commentModel = mongoose.model("comment", commentSchema);
