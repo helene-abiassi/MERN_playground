@@ -3,9 +3,10 @@ import { experienceModel } from "../models/experienceModel.js";
 import userModel from "../models/userModel.js";
 
 const getAllComments = async (req, res) => {
-  const allComments = await commentModel
-    .find()
-    .populate({ path: "author", select: ["email", "username", "user_image"] });
+  const allComments = await commentModel.find().populate([
+    { path: "author", select: ["email", "username", "user_image"] },
+    { path: "experience", select: ["_id"] },
+  ]);
 
   res.json({
     number: allComments.length,
@@ -42,41 +43,33 @@ const getCommentsByUserId = async (req, res) => {
   }
 };
 
-const submitComment = async (req, res) => {
+const getCommentsByExperienceId = async (req, res) => {
+  const { experience } = req.params;
+
   try {
-    const existingUser = await userModel.findOne({ email: req.body.email });
+    const commentsByExperienceId = await commentModel.find({
+      experience: experience,
+    });
+    console.log("commentsByExperienceId :>> ", commentsByExperienceId);
 
-    if (existingUser) {
-      try {
-        const newComment = new commentModel({
-          author: existingUser._id,
-          message: req.body.message,
-        });
-        const savedComment = await newComment.save();
-
-        console.log("newComment :>> ", savedComment);
-        res.status(201).json({
-          message: "Comment posted successfully",
-          comment: savedComment,
-        });
-      } catch (error) {
-        console.log("error leaving comment:>> ", error);
-        res.status(500).json({
-          message: "something went wrong when trying to leave a comment",
-        });
-      }
+    if (commentsByExperienceId.length > 0) {
+      res.status(200).json({
+        number: commentsByExperienceId.length,
+        data: commentsByExperienceId,
+      });
     } else {
-      res.status(401).json({
-        message: "you need to be logged in to leave a comment",
+      res.status(200).json({
+        number: commentsByExperienceId.length,
+        errorMessage: "OH NO! No comments for this experience exist",
       });
     }
   } catch (error) {
-    console.log("error :>> ", error);
+    console.log("expType error :>> ", error);
     res.status(500).json({
-      message: "Oh no! something went wrong!",
+      errorMessage: "something went wrong in the request",
+      error,
     });
   }
 };
 
-
-export { getAllComments, getCommentsByUserId, submitComment };
+export { getAllComments, getCommentsByUserId, getCommentsByExperienceId };
