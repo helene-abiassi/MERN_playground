@@ -6,6 +6,7 @@ import { User } from "../types/customTypes";
 import { AuthContext } from "../context/AuthContext";
 
 export interface LogInCredentials {
+  _id: string;
   email: string;
   password: string;
 }
@@ -115,9 +116,6 @@ function Login() {
             sign up.
           </Link>
         </p>
-        {/* <button className="nakdButton" onClick={logOut}>
-          log out
-        </button> */}
       </div>
     </>
   );
