@@ -125,7 +125,7 @@ function Comments({ comments, _id }: Experience) {
           requestOptions
         );
 
-        console.log("Response status:", response.status); // Log the response status
+        console.log("Response status:", response.status);
 
         if (response.ok) {
           console.log("comment deleted successfully!");
@@ -185,7 +185,10 @@ function Comments({ comments, _id }: Experience) {
               <div key={index}>
                 <span>
                   <span>
-                    {/* <img src={comment.author.user_image} /> */}
+                    <img
+                      style={{ width: "7%", borderRadius: "50%" }}
+                      src={comment.author.user_image}
+                    />
                     <p>{comment.author.username}</p>
                   </span>
                   <span>
