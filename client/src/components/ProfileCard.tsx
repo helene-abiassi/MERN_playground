@@ -4,7 +4,8 @@ import { formatDate } from "./Functions";
 import { useNavigate } from "react-router-dom";
 
 function ProfileCard() {
-  const { user, getProfile, logOut, isLoggedIn } = useContext(AuthContext);
+  const { user, getProfile, logOut, isLoggedIn, deleteProfile } =
+    useContext(AuthContext);
   const navigateTo = useNavigate();
 
   // const getProfile = async () => {
@@ -47,6 +48,11 @@ function ProfileCard() {
   //   }
   // };
 
+  const handleDeleteProfile = (userID: string) => {
+    deleteProfile(userID);
+    navigateTo("/");
+  };
+
   const handleLogOut = () => {
     logOut();
     navigateTo("/");
@@ -59,6 +65,13 @@ function ProfileCard() {
     <div>
       <div className="profileColumns">
         <button onClick={handleLogOut}>log out</button>
+        <button
+          onClick={() => {
+            handleDeleteProfile(user!._id);
+          }}
+        >
+          Delete
+        </button>
         <div className="profileColumnLeft">
           <p className="inputKeys">photo:</p>
           <img style={{ width: "50%" }} src={user?.user_image} alt="" />{" "}
