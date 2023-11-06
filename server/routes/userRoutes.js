@@ -1,10 +1,12 @@
 import express from "express";
 import {
+  deleteUser,
   getAllUsers,
   getProfile,
   getUserById,
   logIn,
   signUp,
+  updateUser,
   uploadImage,
 } from "../controller/userController.js";
 import { multerUpload } from "../middlewares/multer.js";
@@ -16,11 +18,14 @@ const router = express.Router();
 router.get("/all", getAllUsers);
 router.get("/id/:_id", getUserById);
 router.get("/profile", jwtAuth, getProfile);
-//Add all the POST routes that need jwt
 
 //POST Routes
 router.post("/imageUpload", multerUpload.single("user_image"), uploadImage);
 router.post("/signup", signUp);
 router.post("/login", logIn);
+router.post("/updateuser/:_id", updateUser);
+
+//DELETE Routes
+router.delete("/deleteuser/:_id", jwtAuth, deleteUser);
 
 export default router;
