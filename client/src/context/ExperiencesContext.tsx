@@ -14,6 +14,7 @@ interface ExperiencesContextType {
 const initialContext: ExperiencesContextType = {
   experiences: [
     {
+      _id: "",
       author: {
         a_id: "",
         username: "",
@@ -46,6 +47,7 @@ const initialContext: ExperiencesContextType = {
       ],
       comments: [
         {
+          _id: "",
           author: {
             _id: "",
             email: "",
@@ -54,14 +56,15 @@ const initialContext: ExperiencesContextType = {
           },
           date: Date(),
           message: "",
+          experienceID: "",
         },
       ],
     },
   ],
   urlParams: "all",
   fetchExperiences: () => Promise.resolve(),
-  loading: true,
-  error: "",
+  // loading: true,
+  // error: "",
 };
 
 interface ProviderPropsType {
@@ -106,6 +109,7 @@ export const ExperiencesContextProvider = (props: ProviderPropsType) => {
       ],
       comments: [
         {
+          _id: "",
           author: {
             _id: "",
             email: "",
@@ -136,14 +140,14 @@ export const ExperiencesContextProvider = (props: ProviderPropsType) => {
         requestOptions
       );
 
-      console.log("results :>> ", results);
+      // console.log("results :>> ", results);
 
       if (results.status === 200) {
         const data = await results.json();
-        console.log("data :>> ", data);
+        // console.log("data :>> ", data);
         const experienceList = data.data as Experience[];
 
-        console.log("experienceList :>> ", experienceList);
+        // console.log("experienceList :>> ", experienceList);
 
         setUrlParams(urlParams);
         setExpriences(experienceList);
