@@ -36,6 +36,7 @@ function App() {
           <Route path="all" element={<Experiences />} />
           <Route path="hiking" element={<Hiking />} />
           <Route path="wildlife" element={<Wildlife />} />
+          //! Do the same for all adventure types + make sure they're different,
         </Route>
         <Route
           path="experiences/:experienceTitle"
