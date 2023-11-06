@@ -8,6 +8,7 @@ export interface RouteErrorType {
 }
 
 export interface User extends UserImage {
+  _id:string;
     username: string;
     email: string;
     password: string;
@@ -30,7 +31,7 @@ export interface User extends UserImage {
   
 
   export interface Experience extends ExperienceImage {
-    // _id:string;
+    _id:string;
     author: {
       a_id: string;
       username: string;
@@ -68,6 +69,7 @@ export interface User extends UserImage {
   }
 
   export interface CommentsType {
+    _id:string;
     author: {
       _id: string;
       email: string;
@@ -76,4 +78,5 @@ export interface User extends UserImage {
     };
     date: Date | string;
     message: string;
+    experienceID:string
   }
