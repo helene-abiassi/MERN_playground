@@ -7,6 +7,7 @@ import { User, UserImage } from "../types/customTypes";
 function Signup() {
   const [selectedFile, setSelectedFile] = useState<File | string>("");
   const [newUser, setNewUser] = useState<User>({
+    _id: "",
     username: "",
     email: "",
     password: "",
@@ -86,6 +87,7 @@ function Signup() {
     myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
 
     const urlencoded = new URLSearchParams();
+    urlencoded.append("_id", newUser._id);
     urlencoded.append("username", newUser.username);
     urlencoded.append("email", newUser.email);
     urlencoded.append("password", newUser.password);
@@ -104,7 +106,7 @@ function Signup() {
         requestOptions
       );
       const result = await response.json();
-      console.log("result :>> ", result);
+      console.log("result after Signup :>> ", result);
     } catch (error) {
       console.log("error :>> ", error);
     }
