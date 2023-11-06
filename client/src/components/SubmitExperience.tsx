@@ -13,6 +13,7 @@ function SubmitExperience() {
   console.log("user on my Submit page :>> ", user);
 
   const [newExperience, setNewExperience] = useState<Experience>({
+    _id: "",
     author: {
       a_id: "",
       username: "",
