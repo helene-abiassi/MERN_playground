@@ -4,6 +4,7 @@ import "../styles/Home.css";
 import "../styles/Experiences.css";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+// import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";w
 
 function SubmitExperience() {
   const [displayPhoto, setDisplayPhoto] = useState<File | string>("");
@@ -35,6 +36,7 @@ function SubmitExperience() {
     experienceType: "",
     text_body: "",
     photo_body: [""],
+    comments: [],
   });
 
   const navigateTo = useNavigate();
@@ -125,8 +127,6 @@ function SubmitExperience() {
       const result = await response.json();
       console.log("result album photo:>> ", result);
       console.log("result.photo_urls :>> ", result.photo_urls);
-      // const photosArray = result.photo_urls;
-      // console.log("photosArray :>> ", photosArray);
       setNewExperience({ ...newExperience, photo_body: result.photo_urls });
     } catch (error) {
       console.log("error :>> ", error);
@@ -147,8 +147,8 @@ function SubmitExperience() {
     const photoBodyJSON = JSON.stringify(newExperience.photo_body);
 
     const urlencoded = new URLSearchParams();
-    // urlencoded.append("a_id", newExperience.author.a_id); //!THIS DOESNT
-    urlencoded.append("email", user?.email); //!APPEND MY USER TO NEW EXP
+    // urlencoded.append("a_id", newExperience.author.a_id);
+    urlencoded.append("email", user!.email);
     urlencoded.append("title", newExperience.title);
     urlencoded.append("caption", newExperience.caption);
     urlencoded.append("photo", newExperience.photo);
@@ -177,16 +177,35 @@ function SubmitExperience() {
       console.log("error :>> ", error);
     }
     alert("yey!"); //!Replace with modal/toast ++ redirect to story page
-    navigateTo("/experiences");
+    navigateTo("/experiences"); //Template literal
     console.log("newExperience :>> ", newExperience);
   };
+
+  // //? ///////
+  // //? ///////
+  // //? geoLocation
+  // const [location, setLocation] = useState([]);
+  // const geoLocation = () => {
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition(showPosition);
+  //   } else {
+  //     alert("Cannot display location");
+  //   }
+  // };
+  // function showPosition(position) {
+  //   console.log("position :>> ", position);
+  //   const { longitude, latitude } = position.coords;
+  //   const positionArray = [latitude, longitude];
+  //   console.log("positionArray :>> ", positionArray);
+  //   setLocation(positionArray);
+  // }
 
   useEffect(() => {
     setNewExperience(newExperience);
     console.log("newExperience :>> ", newExperience);
+    // geoLocation();
   }, [isLoggedIn]);
 
-  //Do delete + edit experience (not sure where// show in grid and details)
   return (
     <div>
       <div className="inputColorBox">
@@ -254,6 +273,7 @@ function SubmitExperience() {
             onChange={handleFormInput}
             id="textInput"
             type="text"
+            placeholder="Tell us your experience here..."
           />
           <br />
           <button className="formButton" type="submit">
@@ -266,3 +286,30 @@ function SubmitExperience() {
 }
 
 export default SubmitExperience;
+
+{
+  /* <MapContainer center={location} zoom={13} scrollWheelZoom={true}>
+<TileLayer
+  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+/>
+{/* //RAULNOTE - poor attempt of creating markers dynamically */
+}
+{
+  /* experiences.map((experience) => {
+  return (
+    <Marker position={[experience.location.latitude, experience.location.longitude]}></Marker>
+  )
+}) */
+}
+{
+  /* <Marker position={location}> */
+}
+{
+  /* Map through marker to show pins of all locations  */
+}
+// <Popup>
+// A pretty CSS3 popup. <br /> Easily customizable.
+// </Popup>
+// </Marker>
+// </MapContainer> */}
