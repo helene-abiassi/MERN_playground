@@ -1,14 +1,17 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import "../styles/DetailsPage.css";
 import Comments from "../components/Comments";
 import BackButton from "../components/BackButton";
 import { formatDate } from "../components/Functions";
 import { AuthContext } from "../context/AuthContext";
+import { Experience } from "../types/customTypes";
 
 function ExperienceDetails() {
   const location = useLocation();
   const { experience } = location.state;
+
+  const { _id } = experience as Experience;
 
   const { user } = useContext(AuthContext);
 
@@ -16,6 +19,7 @@ function ExperienceDetails() {
 
   console.log("experience in my Details page :>> ", experience);
   console.log("experience._id in Details :>> ", experience._id);
+  console.log("user DETAILS page :>> ", user);
 
   const handleDeleteExperience = async (experienceId: string) => {
     const token = localStorage.getItem("token");
@@ -92,6 +96,7 @@ function ExperienceDetails() {
             Delete
           </button>
         )}
+        <Link to={`/update/${_id}`}>Edit</Link>
 
         <p>{experience.caption}</p>
         <p>{formatDate(experience.publication_date)}</p>
