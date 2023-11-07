@@ -9,6 +9,7 @@ import {
   getExperiencesByType,
   submitComment,
   submitExperience,
+  updateExperience,
   uploadMultiplePhotos,
   uploadPhoto,
 } from "../controller/experienceController.js";
@@ -33,6 +34,9 @@ router.post(
   multerUpload.array("photo_body", 4),
   uploadMultiplePhotos
 );
+router.post("/updateexperience", jwtAuth, updateExperience);
+
+//DELETE Routes
 router.delete("/deletecomment/:_id", jwtAuth, deleteComment);
 router.delete("/deleteexperience/:_id", jwtAuth, deleteExperience);
 
