@@ -56,10 +56,8 @@ const getUserById = async (req, res) => {
 const uploadImage = async (req, res) => {
   console.log(req.file);
 
-  //Upload the file to cloudinary /if/ there is a file in req
   if (req.file) {
     try {
-      // Upload the image
       const uploadedImage = await cloudinary.uploader.upload(req.file.path, {
         folder: "voyageApp/userphotos",
       });
@@ -68,7 +66,6 @@ const uploadImage = async (req, res) => {
         message: "Image uploaded successfully",
         user_image: uploadedImage.secure_url,
       });
-      // Save the photo in the userphoto collection
     } catch (error) {
       console.error("error", error);
     }
@@ -235,25 +232,27 @@ const deleteUser = async (req, res) => {
   }
 };
 
-
 const updateUser = async (req, res) => {
   const elementName = req.body.elementName;
   const elementValue = req.body.elementValue;
   const filter = { email: req.body.email };
   const update = { [`${elementName}`]: elementValue };
+  try {
+    const updatedUser = await userModel.findOneAndUpdate(filter, update, {
+      new: true,
+    });
 
-  // const userEmail = req.body.email;
-  const updatedUser = await userModel.findOneAndUpdate(filter, update, {
-    new: true,
-  });
-
-  res.status(200).json({
-    msg: "User updated successfully",
-    updateUser,
-  });
+    res.status(200).json({
+      msg: "User updated successfully",
+      updateUser,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Something went wrong when trying to update your user",
+      error: error,
+    });
+  }
 };
-
-const updatePhoto = async (req, res) => {};
 
 export {
   uploadImage,
@@ -264,5 +263,4 @@ export {
   getProfile,
   deleteUser,
   updateUser,
-  updatePhoto,
 };
