@@ -23,7 +23,7 @@ router.get("/profile", jwtAuth, getProfile);
 router.post("/imageUpload", multerUpload.single("user_image"), uploadImage);
 router.post("/signup", signUp);
 router.post("/login", logIn);
-router.post("/updateuser/", updateUser);
+router.post("/updateuser", jwtAuth, updateUser);
 
 //DELETE Routes
 router.delete("/deleteuser/:_id", jwtAuth, deleteUser);
