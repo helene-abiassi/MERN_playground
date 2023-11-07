@@ -10,12 +10,11 @@ export interface SearchProps {
 }
 
 function ExpLayout() {
-  const { experiences, fetchExperiences, urlParams } =
-    useContext(ExperiencesContext);
+  const { experiences, fetchExperiences } = useContext(ExperiencesContext);
 
   useEffect(() => {
     fetchExperiences();
-  }, [urlParams]);
+  }, []);
 
   return (
     <div>
