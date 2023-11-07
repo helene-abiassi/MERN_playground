@@ -3,8 +3,8 @@ import { Experience } from "../types/customTypes";
 // import useMyFetch from "../hooks/useMyFetch";
 
 interface ExperiencesContextType {
-  experiences: Experience[];
-  urlParams: string;
+  experiences: Experience[] | null;
+  // urlParams: string;
   fetchExperiences: () => Promise<void>;
   // loading: boolean;
   // error: string;
@@ -12,56 +12,8 @@ interface ExperiencesContextType {
 //!Add Query params + state var to Type above
 
 const initialContext: ExperiencesContextType = {
-  experiences: [
-    {
-      _id: "",
-      author: {
-        a_id: "",
-        username: "",
-        email: "",
-        bio: "",
-        member_since: Date(),
-        user_image: "",
-      },
-      title: "",
-      caption: "",
-      publication_date: Date(),
-      location: {
-        country: "",
-        city: "",
-        longitude: "",
-        latitude: "",
-      },
-      experienceType: "",
-      text_body: "",
-      photo: "",
-      photo_body: "",
-      bookmarked_by: [
-        {
-          _id: "",
-          usernam: "",
-          bio: "",
-          member_since: Date(),
-          user_image: "",
-        },
-      ],
-      comments: [
-        {
-          _id: "",
-          author: {
-            _id: "",
-            email: "",
-            username: "",
-            user_image: "",
-          },
-          date: Date(),
-          message: "",
-          experienceID: "",
-        },
-      ],
-    },
-  ],
-  urlParams: "all",
+  experiences: null,
+  // urlParams: "all",
   fetchExperiences: () => Promise.resolve(),
   // loading: true,
   // error: "",
@@ -75,59 +27,7 @@ export const ExperiencesContext =
   createContext<ExperiencesContextType>(initialContext);
 
 export const ExperiencesContextProvider = (props: ProviderPropsType) => {
-  const [experiences, setExpriences] = useState<Experience[]>([
-    {
-      author: {
-        a_id: "",
-        username: "",
-        email: "",
-        bio: "",
-        member_since: Date(),
-        user_image: "",
-      },
-      title: "",
-      caption: "",
-      publication_date: Date(),
-      location: {
-        country: "",
-        city: "",
-        longitude: "",
-        latitude: "",
-      },
-      experienceType: "",
-      text_body: "",
-      photo: "",
-      photo_body: "",
-      bookmarked_by: [
-        {
-          _id: "",
-          usernam: "",
-          bio: "",
-          member_since: Date(),
-          user_image: "",
-        },
-      ],
-      comments: [
-        {
-          _id: "",
-          author: {
-            _id: "",
-            email: "",
-            username: "",
-            user_image: "",
-          },
-          date: Date(),
-          message: "",
-        },
-      ],
-    },
-  ]);
-
-  const [urlParams, setUrlParams] = useState("all");
-
-  // const { data, error, loading } = useMyFetch<Experience[]>(
-  //   `http://localhost:5005/api/experiences/${urlParams}`
-  // );
+  const [experiences, setExperiences] = useState<Experience[] | null>(null);
 
   const fetchExperiences = async () => {
     const requestOptions = {
@@ -136,7 +36,7 @@ export const ExperiencesContextProvider = (props: ProviderPropsType) => {
 
     try {
       const results = await fetch(
-        `http://localhost:5005/api/experiences/${urlParams}`,
+        `http://localhost:5005/api/experiences/all`,
         requestOptions
       );
 
@@ -147,10 +47,10 @@ export const ExperiencesContextProvider = (props: ProviderPropsType) => {
         // console.log("data :>> ", data);
         const experienceList = data.data as Experience[];
 
-        // console.log("experienceList :>> ", experienceList);
+        console.log("experienceList :>> ", experienceList);
 
-        setUrlParams(urlParams);
-        setExpriences(experienceList);
+        // setUrlParams(urlParams);
+        setExperiences(experienceList);
       }
     } catch (error) {
       console.log("error :>> ", error);
@@ -159,12 +59,10 @@ export const ExperiencesContextProvider = (props: ProviderPropsType) => {
 
   useEffect(() => {
     fetchExperiences();
-  }, [urlParams]);
+  }, []);
 
   return (
-    <ExperiencesContext.Provider
-      value={{ experiences, fetchExperiences, urlParams }}
-    >
+    <ExperiencesContext.Provider value={{ experiences, fetchExperiences }}>
       {props.children}
     </ExperiencesContext.Provider>
   );
