@@ -26,7 +26,7 @@ function ExpCards({ experience }: ExperienceCardProp) {
           </div>
           <p className="storyCardCaption">{caption}</p>
           <p>
-            written by {author.username}, {formatDate(publication_date)}
+            written by {author?.username}, {formatDate(publication_date)}
           </p>
           <Link to={`${title}`} state={{ experience: experience }}>
             View More!!
