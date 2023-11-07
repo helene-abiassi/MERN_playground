@@ -38,7 +38,6 @@ function Home() {
           </Link>
         </div>
       </div>
-
       <br />
       <div className="top5Carousel">{/* <Carousel /> */}</div>
     </div>
