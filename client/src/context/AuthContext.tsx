@@ -214,6 +214,35 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     }
   };
 
+  const updateUser = () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.log("no token available");
+    }
+
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+    myHeaders.append("Authorization", `Bearer ${token}`);
+
+    const urlencoded = new URLSearchParams();
+    urlencoded.append("elementName", "username");
+    urlencoded.append("elementValue", "Stella Bella");
+    urlencoded.append("email", "stella@test.com");
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: urlencoded,
+      redirect: "follow",
+    };
+
+    fetch("http://localhost:5005/api/users/updateuser", requestOptions)
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.log("error", error));
+  };
+
   useEffect(() => {
     console.log("checking if user is logged in");
 
