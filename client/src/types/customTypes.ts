@@ -58,7 +58,7 @@ export interface User extends UserImage {
       member_since:Date | string,
       user_image:string
     }];
-    comments?:CommentsType[]
+    comments:CommentsType[] | null
 
 
   }
