@@ -4,10 +4,16 @@ import { AuthContext } from "../context/AuthContext";
 import { formatDateAndTime } from "./Functions";
 import { ExperiencesContext } from "../context/ExperiencesContext";
 
-function Comments({ comments, _id }: Experience) {
-  const { user } = useContext(AuthContext);
-  // const { fetchExperiences } = useContext(ExperiencesContext);
+type CommentsProps = {
+  comments: CommentsType[];
+  _id: string;
+};
 
+function Comments({ comments, _id }: CommentsProps) {
+  const { user } = useContext(AuthContext);
+  const { experiences, fetchExperiences } = useContext(ExperiencesContext);
+  // const { fetchExperiences } = useContext(ExperiencesContext);
+  console.log("%cexperiences :>> ", "color:orange", experiences);
   const experienceID = _id;
   console.log("experienceID on commentsComp:>> ", experienceID);
 
@@ -22,9 +28,7 @@ function Comments({ comments, _id }: Experience) {
     message: "",
     experienceID: experienceID,
   });
-  const [updatedComments, setUpdatedComments] = useState<CommentsType[] | null>(
-    null
-  );
+  const [commments, setUpdatedComments] = useState<CommentsType[] | null>(null);
   const [textInput, setTextInput] = useState("");
 
   const handleNewComments = (e: ChangeEvent<HTMLInputElement>) => {
@@ -86,11 +90,15 @@ function Comments({ comments, _id }: Experience) {
 
         console.log("results for posting comments :>> ", response);
 
-        const data = await response.json();
-        console.log("data for my new comment :>> ", data);
         if (response.ok) {
+          const data = await response.json();
+          console.log("data for my new comment :>> ", data);
           const newComment: CommentsType = data.comment;
+          // fetchComments();
+          //trigger fetchExperiences function from ExperiencesContext
+          fetchExperiences();
         } else {
+          const data = await response.json();
           console.error("Error posting comment:", data.message);
         }
       } catch (error) {
@@ -129,6 +137,7 @@ function Comments({ comments, _id }: Experience) {
 
         if (response.ok) {
           console.log("comment deleted successfully!");
+          fetchExperiences();
         } else {
           console.log("error with response when deleting comment");
         }
@@ -138,10 +147,7 @@ function Comments({ comments, _id }: Experience) {
     }
   };
 
-  useEffect(() => {
-    fetchComments();
-    // fetchExperiences();
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <div>
@@ -178,41 +184,41 @@ function Comments({ comments, _id }: Experience) {
       </form>
 
       <div style={{ backgroundColor: "white" }}>
-        {(updatedComments && updatedComments.length > 0) ||
-        (comments && comments.length > 0) ? (
-          (updatedComments ? updatedComments : comments!).map(
-            (comment, index) => (
-              <div key={index}>
-                <span>
-                  <span>
-                    <img
-                      style={{ width: "7%", borderRadius: "50%" }}
-                      src={comment.author.user_image}
-                    />
-                    <p>{comment.author.username}</p>
-                  </span>
-                  <span>
-                    <p>{formatDateAndTime(comment.date)}</p>
-                  </span>
-                </span>
-                <span>
-                  <p>{comment.message}</p>
-                </span>
-                {user?.email === comment.author.email && (
-                  <button
-                    onClick={() => {
-                      handleDeleteComment(comment._id);
-                    }}
-                  >
-                    Delete
-                  </button>
-                )}
-              </div>
-            )
-          )
-        ) : (
-          <p>Be the first one to leave a comment</p>
-        )}{" "}
+        <div>
+          {experiences && experiences.length > 0 ? (
+            experiences.map((experience) => {
+              return (
+                <div key={experience._id}>
+                  {experience._id === experienceID &&
+                    experience.comments?.map((comment) => {
+                      return (
+                        <div key={comment._id}>
+                          <img
+                            style={{ width: "7%", borderRadius: "50%" }}
+                            src={comment.author.user_image}
+                          />
+                          <p>{comment.author.username}</p>
+                          <p>{formatDateAndTime(comment.date)}</p>
+                          <p>{comment.message}</p>
+                          {user?.email === comment.author.email && (
+                            <button
+                              onClick={() => {
+                                handleDeleteComment(comment._id);
+                              }}
+                            >
+                              Delete
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                </div>
+              );
+            })
+          ) : (
+            <p>Be the first one to leave a comment</p>
+          )}
+        </div>
       </div>
     </div>
   );
