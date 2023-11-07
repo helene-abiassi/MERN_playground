@@ -206,10 +206,8 @@ const submitExperience = async (req, res) => {
 const uploadPhoto = async (req, res) => {
   console.log(req.file);
 
-  //Upload the file to cloudinary /if/ there is a file in req
   if (req.file) {
     try {
-      // Upload the image
       const uploadedImage = await cloudinary.uploader.upload(req.file.path, {
         folder: "voyageApp/experienceMainPhotos",
       });
@@ -218,7 +216,6 @@ const uploadPhoto = async (req, res) => {
         message: "Image uploaded successfully",
         photo: uploadedImage.secure_url,
       });
-      // Save the photo in the userphoto collection
     } catch (error) {
       console.error("error", error);
     }
@@ -280,7 +277,12 @@ const submitComment = async (req, res) => {
         const experience = await experienceModel.findOneAndUpdate(
           { _id: experienceID },
           {
-            $push: { comments: savedComment },
+            $push: {
+              comments: {
+                $each: [savedComment],
+                // $sort: { createdAt: -1 },
+              },
+            },
           },
           { new: true }
         );
@@ -382,6 +384,32 @@ const deleteComment = async (req, res) => {
   }
 };
 
+const updateExperience = async (req, res) => {
+  const elementName = req.body.elementName;
+  const elementValue = req.body.elementValue;
+  const filter = { _id: req.body._id };
+  const update = { [`${elementName}`]: elementValue };
+  try {
+    const updatedExperience = await experienceModel.findByIdAndUpdate(
+      filter,
+      update,
+      {
+        new: true,
+      }
+    );
+
+    res.status(200).json({
+      msg: "Experience updated successfully",
+      updatedExperience,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Something went wrong when trying to update your experience",
+      error: error,
+    });
+  }
+};
+
 export {
   getAllExperiences,
   getExperiencesByType,
@@ -394,4 +422,5 @@ export {
   submitComment,
   deleteComment,
   deleteExperience,
+  updateExperience,
 };
