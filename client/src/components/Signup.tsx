@@ -17,8 +17,12 @@ function Signup() {
     member_since: new Date(),
     bookmarks: [
       {
-        id: "",
-        author: "",
+        _id: "",
+        author: {
+          _id: "",
+          username: "",
+          user_image: "",
+        },
         title: "",
         publication_date: Date(),
         photo: "",
