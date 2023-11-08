@@ -2,6 +2,13 @@ import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Experience } from "../types/customTypes";
 
+// fields to update in a state
+// all fields to update in object, take
+// when submit form, you call the function
+// pass arguments that you need to update
+
+// pass all the values, and if there's no update, keep and only call the update function for the values that changed
+
 function UpdateExperience() {
   const { experienceId } = useParams();
   console.log("experienceId :>> ", experienceId);
@@ -99,7 +106,7 @@ function UpdateExperience() {
     );
     urlencoded.append(
       "caption",
-      `${updatedExperience.caption}` || `${existingExperience?.caption}`
+      `${updatedExperience.caption}` || `${existingExperience?.caption}` //!Getting undefined from expType, location + test if no field changes
     );
     // urlencoded.append("photo", `${updatedExperience.photo}`);
     urlencoded.append(
@@ -148,8 +155,9 @@ function UpdateExperience() {
       if (response.ok) {
         const results = await response.json();
         console.log("results for my Updated Experience :>> ", results);
-        setUpdatedExperience(results.updatedExperience);
+        setUpdatedExperience(results.data);
       }
+      fetchExistingData();
     } catch (error) {
       console.log("error when trying to update your experience :>> ", error);
     }
