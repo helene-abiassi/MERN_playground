@@ -10,36 +10,36 @@ import { Experience } from "../types/customTypes";
 // pass all the values, and if there's no update, keep and only call the update function for the values that changed
 
 function UpdateExperience() {
-  const [existingExperience, setExistingExperience] = useState<Experience>();
-  const [updatedExperience, setUpdatedExperience] = useState<Experience>({
-    _id: "",
-    author: {
-      a_id: "",
-      username: "",
-      email: "",
-      bio: "",
-      member_since: Date(),
-      user_image: "",
-    },
-    title: "",
-    caption: "",
-    publication_date: new Date(),
-    photo: "",
-    location: {
-      country: "",
-      city: "",
-      longitude: "",
-      latitude: "",
-    },
-    experienceType: "",
-    text_body: "",
-    photo_body: [""],
-    comments: [],
-  });
-  const [updatedPhoto, setUpdatedPhoto] = useState<File | string>("");
-
   const { experienceId } = useParams();
   console.log("experienceId :>> ", experienceId);
+
+  const [existingExperience, setExistingExperience] = useState<Experience>();
+  const [updatedExperience, setUpdatedExperience] = useState<Experience>({
+    _id: experienceId,
+    author: {
+      a_id: existingExperience?.author.a_id,
+      username: existingExperience?.author.username,
+      email: existingExperience?.author.email,
+      bio: existingExperience?.author.bio,
+      member_since: existingExperience?.author.member_since,
+      user_image: existingExperience?.author.user_image,
+    },
+    title: existingExperience?.title,
+    caption: existingExperience?.caption,
+    publication_date: new Date(),
+    photo: existingExperience?.photo,
+    location: {
+      country: existingExperience?.location.country,
+      city: existingExperience?.location.city,
+      longitude: existingExperience?.location.longitude,
+      latitude: existingExperience?.location.latitude,
+    },
+    experienceType: existingExperience?.experienceType,
+    text_body: existingExperience?.text_body,
+    photo_body: existingExperience?.photo_body,
+    comments: existingExperience?.comments,
+  });
+  const [updatedPhoto, setUpdatedPhoto] = useState<File | string>("");
 
   const navigateTo = useNavigate();
 
@@ -100,15 +100,44 @@ function UpdateExperience() {
     myHeaders.append("Authorization", `Bearer ${token}`);
 
     const urlencoded = new URLSearchParams();
-    urlencoded.append("title", `${updatedExperience.title}`);
-    urlencoded.append("caption", `${updatedExperience.caption}`);
-    urlencoded.append("photo", `${updatedExperience.photo}`);
-    urlencoded.append("country", `${updatedExperience.location.country}`);
-    urlencoded.append("city", `${updatedExperience.location.city}`);
-    urlencoded.append("longitude", `${updatedExperience.location.longitude}`);
-    urlencoded.append("latitude", `${updatedExperience.location.latitude}`);
-    urlencoded.append("experienceType", `${updatedExperience.experienceType}`);
-    urlencoded.append("text_body", `${updatedExperience.text_body}`);
+    urlencoded.append(
+      "title",
+      `${updatedExperience.title}` || `${existingExperience?.title}`
+    );
+    urlencoded.append(
+      "caption",
+      `${updatedExperience.caption}` || `${existingExperience?.caption}`
+    );
+    // urlencoded.append("photo", `${updatedExperience.photo}`);
+    urlencoded.append(
+      "country",
+      `${updatedExperience?.location.country}` ||
+        `${existingExperience?.location.country}`
+    );
+    urlencoded.append(
+      "city",
+      `${updatedExperience?.location.city}` ||
+        `${existingExperience?.location.city}`
+    );
+    urlencoded.append(
+      "longitude",
+      `${updatedExperience?.location.longitude}` ||
+        `${existingExperience?.location.longitude}`
+    );
+    urlencoded.append(
+      "latitude",
+      `${updatedExperience?.location.latitude}` ||
+        `${existingExperience?.location.latitude}`
+    );
+    urlencoded.append(
+      "experienceType",
+      `${updatedExperience?.experienceType}` ||
+        `${existingExperience?.experienceType}`
+    );
+    urlencoded.append(
+      "text_body",
+      `${updatedExperience?.text_body}` || `${existingExperience?.text_body}`
+    );
     urlencoded.append("_id", `${experienceId}`);
 
     const requestOptions = {
@@ -137,26 +166,30 @@ function UpdateExperience() {
   };
 
   useEffect(() => {
+    setExistingExperience(existingExperience);
     setUpdatedExperience(updatedExperience);
     fetchExistingData();
   }, []);
 
-  //   value={elementName}
-
   return (
     <div className="inputColorBox">
-      <form onSubmit={handleUpdatedPhotoSubmit}>
+      {/* <form onSubmit={handleUpdatedPhotoSubmit}>
         <label htmlFor="photo">photo</label>
-        <input onChange={handlePhotoInputChange} name="photo" type="file" />
+        <input
+          onChange={handlePhotoInputChange}
+          value={updatedExperience.photo || existingExperience?.photo}
+          name="photo"
+          type="file"
+        />
         <button type="submit">upload</button>
-      </form>
+      </form> */}
 
       <form onSubmit={handleUpdateExperience}>
         <br />
         <label htmlFor="title">title:</label>
         <input
           onChange={handleInputChange}
-          value={existingExperience!.title || updatedExperience.title}
+          value={updatedExperience.title || existingExperience?.title}
           name="title"
           type="text"
         />
@@ -165,7 +198,7 @@ function UpdateExperience() {
         <label htmlFor="caption">caption:</label>
         <input
           onChange={handleInputChange}
-          value={existingExperience!.caption || updatedExperience.caption}
+          value={updatedExperience.caption || existingExperience?.caption}
           name="caption"
           type="text"
         />
@@ -175,8 +208,8 @@ function UpdateExperience() {
         <input
           onChange={handleInputChange}
           value={
-            existingExperience!.location.country ||
-            updatedExperience.location.country
+            updatedExperience.location.country ||
+            existingExperience?.location.country
           }
           name="country"
           type="text"
@@ -187,7 +220,7 @@ function UpdateExperience() {
         <input
           onChange={handleInputChange}
           value={
-            existingExperience!.location.city || updatedExperience.location.city
+            updatedExperience.location.city || existingExperience?.location.city
           }
           name="city"
           type="text"
@@ -200,8 +233,8 @@ function UpdateExperience() {
           id="experienceType"
           name="experienceType"
           value={
-            existingExperience!.experienceType ||
-            updatedExperience.experienceType
+            updatedExperience.experienceType ||
+            existingExperience?.experienceType
           }
         >
           <option value="search">Search</option>
@@ -215,7 +248,7 @@ function UpdateExperience() {
         <input
           name="text_body"
           onChange={handleInputChange}
-          value={existingExperience!.text_body || updatedExperience.text_body}
+          value={updatedExperience.text_body || existingExperience?.text_body}
           id="textInput"
           type="text"
         />
