@@ -49,6 +49,43 @@ function ProfileCard() {
             member since:{formatDate(user?.member_since)}
           </p>
           <p className="inputKeys">bio:{user?.bio}</p>
+          <p>Bookmarks: {user?.bookmarks.length}</p>
+          {user?.bookmarks &&
+            user.bookmarks.map((bookmark, bookInd) => {
+              return (
+                <div key={bookInd}>
+                  <img
+                    style={{ width: "10%" }}
+                    src={bookmark.photo}
+                    alt={bookmark.title}
+                  />
+                  <p>{bookmark.title}</p>
+                  <p>{bookmark.publication_date}</p>
+                  <p>
+                    {bookmark.location.country}, {bookmark.location.city}
+                  </p>
+                </div>
+              );
+            })}
+          <p>Submissions: {user?.submissions.length}</p>
+          {/* //!Add conditional rendering for length<0, no submissions posted yet */}
+          {user?.submissions &&
+            user.submissions.map((submission, submInd) => {
+              return (
+                <div key={submInd}>
+                  <img
+                    style={{ width: "10%" }}
+                    src={submission.photo}
+                    alt={submission.title}
+                  />
+                  <p>{submission.title}</p>
+                  <p>{submission.publication_date}</p>
+                  <p>
+                    {submission.location.country}, {submission.location.city}
+                  </p>
+                </div>
+              );
+            })}
         </div>
       </div>
     </div>
