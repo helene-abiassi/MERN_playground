@@ -8,11 +8,13 @@ const getAllUsers = async (req, res) => {
   const allUsers = await userModel.find().populate([
     {
       path: "bookmarks",
-      select: ["title", "publication_date", "photo"],
+      select: ["title", "publication_date", "photo", "author"],
+      populate: { path: "author", select: ["username", "user_image"] },
     },
     {
       path: "submissions",
-      select: ["title", "publication_date", "photo"],
+      select: ["title", "publication_date", "photo", "author"],
+      populate: { path: "author", select: ["username", "user_image"] },
     },
   ]);
 
