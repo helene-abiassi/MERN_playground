@@ -95,12 +95,13 @@ function ExperienceDetails() {
           >
             Delete
           </button>
-        )}
-        <Link to={`/update/${_id}`}>Edit</Link>
-
+        )}{" "}
+        <Link style={{ backgroundColor: "black" }} to={`/update/${_id}`}>
+          Edit
+        </Link>
+        <p>Bookmarks: {experience.bookmarked_by.length}</p>
         <p>{experience.caption}</p>
         <p>{formatDate(experience.publication_date)}</p>
-
         <hr />
         <p>
           <svg
@@ -141,7 +142,6 @@ function ExperienceDetails() {
           </svg>
           {experience.experienceType}
         </p>
-
         <p>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -188,7 +188,6 @@ function ExperienceDetails() {
           </svg>
         </p>
         <hr />
-
         <p>{experience.text_body}</p>
         {experience.photo_body.map((photo: string, idPhoto: number) => {
           return (
