@@ -27,7 +27,7 @@ function Profile() {
           </svg>
         </div>
         <ProfileCard />
-        <BucketList />
+        {/* <BucketList /> */}
       </div>
     </div>
   );
