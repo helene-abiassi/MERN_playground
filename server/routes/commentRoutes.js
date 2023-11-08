@@ -15,7 +15,5 @@ const router = express.Router();
 router.get("/all", getAllComments);
 router.get("/user/:author", getCommentsByUserId);
 router.get("/experience/:experience", getCommentsByExperienceId);
-//RAULNOTE - route to test how post request with form-data works
-// router.post("/test", multerUpload.single("image"), testFormRequest);
 
 export default router;
