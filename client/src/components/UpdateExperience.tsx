@@ -2,13 +2,6 @@ import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Experience } from "../types/customTypes";
 
-// fields to update in a state
-// all fields to update in object, take
-// when submit form, you call the function
-// pass arguments that you need to update
-
-// pass all the values, and if there's no update, keep and only call the update function for the values that changed
-
 function UpdateExperience() {
   const { experienceId } = useParams();
   console.log("experienceId :>> ", experienceId);
