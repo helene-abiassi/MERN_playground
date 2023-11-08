@@ -28,6 +28,13 @@ export const ExperiencesContext =
 
 export const ExperiencesContextProvider = (props: ProviderPropsType) => {
   const [experiences, setExperiences] = useState<Experience[] | null>(null);
+  //FIXME think about the use of urlParams in a context (no specific url to be at when the context is rendered)
+
+  // const [urlParams, setUrlParams] = useState("all");
+
+  // const { data, error, loading } = useMyFetch<Experience[]>(
+  //   `http://localhost:5005/api/experiences/${urlParams}`
+  // );
 
   const fetchExperiences = async () => {
     const requestOptions = {
