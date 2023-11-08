@@ -19,7 +19,12 @@ export interface User extends UserImage {
   }
   
   export interface ExpDetails {
-    author:string;
+    _id:string,
+    author:{
+      _id:string,
+      username:string,
+      user_image:string,
+    },
     title: string;
     publication_date: Date;
     photo: string;
@@ -51,9 +56,9 @@ export interface User extends UserImage {
     };
     experienceType: string;
     text_body: string;
-    bookmarked_by?:[{
+    bookmarked_by:[{
       _id:string,
-      usernam:string,
+      username:string,
       bio:string,
       member_since:Date | string,
       user_image:string
