@@ -384,11 +384,49 @@ const deleteComment = async (req, res) => {
   }
 };
 
+// const updateExperience = async (req, res) => {
+//   const elementName = req.body.elementName;
+//   const elementValue = req.body.elementValue;
+//   const filter = { _id: req.body._id };
+//   const update = { [`${elementName}`]: elementValue };
+//   try {
+//     const updatedExperience = await experienceModel.findByIdAndUpdate(
+//       filter,
+//       update,
+//       {
+//         new: true,
+//       }
+//     );
+
+//     res.status(200).json({
+//       msg: "Experience updated successfully",
+//       updatedExperience,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: "Something went wrong when trying to update your experience",
+//       error: error,
+//     });
+//   }
+// };
+
 const updateExperience = async (req, res) => {
-  const elementName = req.body.elementName;
-  const elementValue = req.body.elementValue;
   const filter = { _id: req.body._id };
-  const update = { [`${elementName}`]: elementValue };
+
+  const update = {
+    title: req.body.title,
+    caption: req.body.caption,
+    photo: req.body.photo,
+    location: {
+      country: req.body.country,
+      city: req.body.city,
+      longitude: req.body.longitude,
+      latitude: req.body.latitude,
+    },
+    experienceType: req.body.experienceType,
+    text_body: req.body.text_body,
+  };
+
   try {
     const updatedExperience = await experienceModel.findByIdAndUpdate(
       filter,
