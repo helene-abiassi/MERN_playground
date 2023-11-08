@@ -1,6 +1,5 @@
 import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
 import { Experience } from "../types/customTypes";
 
 // fields to update in a state
@@ -11,6 +10,7 @@ import { Experience } from "../types/customTypes";
 // pass all the values, and if there's no update, keep and only call the update function for the values that changed
 
 function UpdateExperience() {
+  const [existingExperience, setExistingExperience] = useState<Experience>();
   const [updatedExperience, setUpdatedExperience] = useState<Experience>({
     _id: "",
     author: {
@@ -36,27 +36,55 @@ function UpdateExperience() {
     photo_body: [""],
     comments: [],
   });
-  const [elementName, setElementName] = useState(); //Tie these to values in input fields
-  const [elementValue, setElementValue] = useState();
+  const [updatedPhoto, setUpdatedPhoto] = useState<File | string>("");
 
   const { experienceId } = useParams();
   console.log("experienceId :>> ", experienceId);
 
-  const { isLoggedIn } = useContext(AuthContext);
-
   const navigateTo = useNavigate();
 
+  const fetchExistingData = async () => {
+    const requestOptions = {
+      method: "GET",
+    };
+
+    try {
+      const response = await fetch(
+        `http://localhost:5005/api/experiences/id/${experienceId}`,
+        requestOptions
+      );
+
+      if (response.ok) {
+        const results = await response.json();
+        console.log("results on Update :>> ", results);
+        setExistingExperience(results.data);
+        console.log("existingExperience :>> ", existingExperience);
+      }
+    } catch (error) {
+      console.log("error in your update comp:>> ", error);
+    }
+  };
+
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    // const setElementValue = "X";
     const { name, value } = e.target;
+    setUpdatedExperience({ ...updatedExperience, [name]: value }); //!
   };
 
   const handleTypeInputChange = (e: ChangeEvent<HTMLSelectElement>) => {
     console.log("e.target.value :>> ", e.target.value);
     setUpdatedExperience({
       ...updatedExperience,
-      experienceType: e.target.value,
+      experienceType: e.target.value, //!
     });
+  };
+
+  const handlePhotoInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    console.log("e :>> ", e);
+    setUpdatedPhoto(e.target.files?.[0] || "");
+  };
+
+  const handleUpdatedPhotoSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); //! DO i need this or do i just do it as part of my updateFetch
   };
 
   const handleUpdateExperience = async (e: FormEvent<HTMLFormElement>) => {
@@ -72,8 +100,15 @@ function UpdateExperience() {
     myHeaders.append("Authorization", `Bearer ${token}`);
 
     const urlencoded = new URLSearchParams();
-    urlencoded.append("elementName", `${elementName}`);
-    urlencoded.append("elementValue", `${elementValue}`);
+    urlencoded.append("title", `${updatedExperience.title}`);
+    urlencoded.append("caption", `${updatedExperience.caption}`);
+    urlencoded.append("photo", `${updatedExperience.photo}`);
+    urlencoded.append("country", `${updatedExperience.location.country}`);
+    urlencoded.append("city", `${updatedExperience.location.city}`);
+    urlencoded.append("longitude", `${updatedExperience.location.longitude}`);
+    urlencoded.append("latitude", `${updatedExperience.location.latitude}`);
+    urlencoded.append("experienceType", `${updatedExperience.experienceType}`);
+    urlencoded.append("text_body", `${updatedExperience.text_body}`);
     urlencoded.append("_id", `${experienceId}`);
 
     const requestOptions = {
@@ -81,6 +116,7 @@ function UpdateExperience() {
       headers: myHeaders,
       body: urlencoded,
     };
+
     try {
       const response = await fetch(
         "http://localhost:5005/api/experiences/updateexperience",
@@ -90,7 +126,7 @@ function UpdateExperience() {
       if (response.ok) {
         const results = await response.json();
         console.log("results for my Updated Experience :>> ", results);
-        setUpdatedExperience(results);
+        setUpdatedExperience(results.updatedExperience);
       }
     } catch (error) {
       console.log("error when trying to update your experience :>> ", error);
@@ -102,16 +138,25 @@ function UpdateExperience() {
 
   useEffect(() => {
     setUpdatedExperience(updatedExperience);
-  }, [isLoggedIn]);
+    fetchExistingData();
+  }, []);
+
+  //   value={elementName}
 
   return (
-    <div>
-      <form className="inputColorBox" onSubmit={handleUpdateExperience}>
+    <div className="inputColorBox">
+      <form onSubmit={handleUpdatedPhotoSubmit}>
+        <label htmlFor="photo">photo</label>
+        <input onChange={handlePhotoInputChange} name="photo" type="file" />
+        <button type="submit">upload</button>
+      </form>
+
+      <form onSubmit={handleUpdateExperience}>
         <br />
         <label htmlFor="title">title:</label>
         <input
           onChange={handleInputChange}
-          value={updatedExperience.title}
+          value={existingExperience!.title || updatedExperience.title}
           name="title"
           type="text"
         />
@@ -120,7 +165,7 @@ function UpdateExperience() {
         <label htmlFor="caption">caption:</label>
         <input
           onChange={handleInputChange}
-          value={updatedExperience.caption}
+          value={existingExperience!.caption || updatedExperience.caption}
           name="caption"
           type="text"
         />
@@ -129,7 +174,10 @@ function UpdateExperience() {
         <label htmlFor="country">country:</label>
         <input
           onChange={handleInputChange}
-          value={updatedExperience.location.country}
+          value={
+            existingExperience!.location.country ||
+            updatedExperience.location.country
+          }
           name="country"
           type="text"
         />
@@ -138,7 +186,9 @@ function UpdateExperience() {
         <label htmlFor="city">city:</label>
         <input
           onChange={handleInputChange}
-          value={updatedExperience.location.city}
+          value={
+            existingExperience!.location.city || updatedExperience.location.city
+          }
           name="city"
           type="text"
         />
@@ -146,10 +196,13 @@ function UpdateExperience() {
         <br />
         <label htmlFor="experienceType">experience type:</label>
         <select
-          // onChange={handleTypeInput}
+          onChange={handleTypeInputChange}
           id="experienceType"
           name="experienceType"
-          value={updatedExperience.experienceType}
+          value={
+            existingExperience!.experienceType ||
+            updatedExperience.experienceType
+          }
         >
           <option value="search">Search</option>
           <option value="hiking">hiking</option>
@@ -162,6 +215,7 @@ function UpdateExperience() {
         <input
           name="text_body"
           onChange={handleInputChange}
+          value={existingExperience!.text_body || updatedExperience.text_body}
           id="textInput"
           type="text"
         />
