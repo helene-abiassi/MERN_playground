@@ -9,7 +9,7 @@ export interface ExperienceCardProp {
 }
 
 function ExpCards({ experience }: ExperienceCardProp) {
-  const { author, title, caption, publication_date, photo } =
+  const { author, title, caption, publication_date, photo, bookmarked_by } =
     experience as Experience;
 
   const { user } = useContext(AuthContext);
@@ -24,6 +24,8 @@ function ExpCards({ experience }: ExperienceCardProp) {
           <div>
             <img className="gridPhoto" src={photo} />
           </div>
+          <p>Bookmarks: {experience.bookmarked_by.length}</p>
+
           <p className="storyCardCaption">{caption}</p>
           <p>
             written by {author?.username}, {formatDate(publication_date)}
