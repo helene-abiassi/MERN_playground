@@ -6,20 +6,26 @@ import userModel from "../models/userModel.js";
 const getAllExperiences = async (req, res) => {
   const { comments } = req.query;
 
-  const allExperiences = await experienceModel.find().populate([
-    {
-      path: "bookmarked_by",
-      select: ["username", "bio", "member_since", "user_image"],
-    },
-    {
-      path: "comments",
-      populate: { path: "author", select: ["email", "username", "user_image"] },
-    },
-    {
-      path: "author",
-      select: ["username", "email", "bio", "member_since", "user_image"],
-    },
-  ]);
+  const allExperiences = await experienceModel
+    .find()
+    .populate([
+      {
+        path: "bookmarked_by",
+        select: ["username", "bio", "member_since", "user_image"],
+      },
+      {
+        path: "comments",
+        populate: {
+          path: "author",
+          select: ["email", "username", "user_image"],
+        },
+      },
+      {
+        path: "author",
+        select: ["username", "email", "bio", "member_since", "user_image"],
+      },
+    ])
+    .sort({ "comments.createdAt": -1 });
 
   res.json({
     number: allExperiences.length,
@@ -152,13 +158,11 @@ const getExperiencesByCity = async (req, res) => {
 };
 
 const submitExperience = async (req, res) => {
-  console.log("req.body :>> ", req.body);
   const photosArray = JSON.parse(req.body.photo_body);
-  console.log("photosArray :>> ", photosArray);
 
   try {
     const existingUser = await userModel.findOne({ email: req.body.email });
-    console.log("existingUser :>> ", existingUser);
+
     if (existingUser) {
       try {
         const newSubmission = new experienceModel({
@@ -179,7 +183,9 @@ const submitExperience = async (req, res) => {
 
         const savedSubmission = await newSubmission.save();
 
-        console.log("savedSubmission :>> ", savedSubmission);
+        existingUser.submissions.push(savedSubmission._id);
+        await existingUser.save();
+
         res.status(201).json({
           message: "Experience posted successfully",
           submission: savedSubmission,
@@ -202,7 +208,6 @@ const submitExperience = async (req, res) => {
     });
   }
 };
-
 const uploadPhoto = async (req, res) => {
   console.log(req.file);
 
@@ -280,7 +285,7 @@ const submitComment = async (req, res) => {
             $push: {
               comments: {
                 $each: [savedComment],
-                // $sort: { createdAt: -1 },
+                $sort: { createdAt: -1 },
               },
             },
           },
@@ -330,6 +335,18 @@ const deleteExperience = async (req, res) => {
       });
     }
 
+    await commentModel.deleteMany({ experience: experienceId });
+
+    users.forEach(async (user) => {
+      user.bookmarks = user.bookmarks.filter(
+        (bookmark) => bookmark.toString() !== experienceId
+      );
+      user.submissions = user.submissions.filter(
+        (submission) => submission.toString() !== experienceId
+      );
+      await user.save();
+    });
+
     res.status(200).json({
       msg: "Experience deleted successfully",
       experience: deletedExperience,
@@ -360,8 +377,10 @@ const deleteComment = async (req, res) => {
       });
     }
 
+    const experienceId = deletedComment.experience;
+
     const experience = await experienceModel.findByIdAndUpdate(
-      deletedComment.experience,
+      experienceId,
       { $pull: { comments: commentId } },
       { new: true }
     );
@@ -383,32 +402,6 @@ const deleteComment = async (req, res) => {
     });
   }
 };
-
-// const updateExperience = async (req, res) => {
-//   const elementName = req.body.elementName;
-//   const elementValue = req.body.elementValue;
-//   const filter = { _id: req.body._id };
-//   const update = { [`${elementName}`]: elementValue };
-//   try {
-//     const updatedExperience = await experienceModel.findByIdAndUpdate(
-//       filter,
-//       update,
-//       {
-//         new: true,
-//       }
-//     );
-
-//     res.status(200).json({
-//       msg: "Experience updated successfully",
-//       updatedExperience,
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       message: "Something went wrong when trying to update your experience",
-//       error: error,
-//     });
-//   }
-// };
 
 const updateExperience = async (req, res) => {
   const filter = { _id: req.body._id };
