@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
-import { CommentsType, Experience } from "../types/customTypes";
+import { CommentsType } from "../types/customTypes";
 import { AuthContext } from "../context/AuthContext";
 import { formatDateAndTime } from "./Functions";
 import { ExperiencesContext } from "../context/ExperiencesContext";
