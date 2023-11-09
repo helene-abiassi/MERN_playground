@@ -441,6 +441,89 @@ const updateExperience = async (req, res) => {
   }
 };
 
+const addBookmark = async (req, res) => {
+  const experienceId = req.params._id;
+
+  console.log("experienceId :>> ", experienceId);
+
+  try {
+    const existingUser = await userModel.findOne({ email: req.body.email });
+
+    if (!existingUser) {
+      return res.status(401).json({
+        message: "User not found or not authenticated",
+      });
+    }
+
+    if (existingUser.bookmarks.includes(experienceId)) {
+      return res.status(400).json({
+        message: "Experience already bookmarked",
+      });
+    }
+
+    existingUser.bookmarks.push(experienceId);
+    await existingUser.save();
+
+    const experience = await experienceModel.findById(experienceId);
+    experience.bookmarked_by.push(existingUser._id);
+    await experience.save();
+
+    console.log("experience :>> ", experience);
+
+    res.status(200).json({
+      message: "Experience bookmarked successfully",
+      user: existingUser,
+    });
+  } catch (error) {
+    console.log("Catch error: ", error);
+    res.status(500).json({
+      message: "Oh no! Something went wrong!",
+    });
+  }
+};
+
+const removeBookmark = async (req, res) => {
+  //!Doesn't work!!!
+  const experienceId = req.params._id;
+
+  try {
+    const existingUser = await userModel.findOne({ email: req.body.email });
+
+    if (!existingUser) {
+      return res.status(401).json({
+        message: "User not found or not authenticated",
+      });
+    }
+
+    if (!existingUser.bookmarks.includes(experienceId)) {
+      return res.status(400).json({
+        message: "Experience not found in bookmarks",
+      });
+    }
+
+    existingUser.bookmarks = existingUser.bookmarks.filter(
+      (bookmark) => bookmark !== experienceId
+    );
+    await existingUser.save();
+
+    const experience = await experienceModel.findById(experienceId);
+    experience.bookmarked_by = experience.bookmarked_by.filter(
+      (userId) => userId.toString() !== existingUser._id.toString()
+    );
+    await experience.save();
+
+    res.status(200).json({
+      message: "Experience removed from bookmarks successfully",
+      user: existingUser,
+    });
+  } catch (error) {
+    console.log("Catch error: ", error);
+    res.status(500).json({
+      message: "Oh no! Something went wrong!",
+    });
+  }
+};
+
 export {
   getAllExperiences,
   getExperiencesByType,
@@ -454,4 +537,6 @@ export {
   deleteComment,
   deleteExperience,
   updateExperience,
+  addBookmark,
+  removeBookmark,
 };
