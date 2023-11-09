@@ -1,6 +1,6 @@
 import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Experience } from "../types/customTypes";
+import { Experience, ExperienceImage } from "../types/customTypes";
 
 function UpdateExperience() {
   const { experienceId } = useParams();
@@ -32,7 +32,9 @@ function UpdateExperience() {
     photo_body: existingExperience?.photo_body,
     comments: existingExperience?.comments,
   });
-  const [updatedPhoto, setUpdatedPhoto] = useState<File | string>("");
+  const [updatedPhoto, setUpdatedPhoto] = useState<File | string>(
+    existingExperience?.photo
+  );
 
   const navigateTo = useNavigate();
 
@@ -170,8 +172,34 @@ function UpdateExperience() {
     setUpdatedPhoto(e.target.files?.[0] || "");
   };
 
-  const handleUpdatedPhotoSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); //! DO i need this or do i just do it as part of my updateFetch
+  const handleUpdatedPhotoSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formdata = new FormData();
+    formdata.append("photo", updatedPhoto);
+
+    console.log("formdata :>> ", formdata);
+
+    const requestOptions = {
+      method: "POST",
+      body: formdata,
+    };
+
+    try {
+      const response = await fetch(
+        "http://localhost:5005/api/experiences/mainphotoupload",
+        requestOptions
+      );
+      const result = (await response.json()) as ExperienceImage;
+      console.log("result single photo:>> ", result);
+
+      //   setUpdatedExperience({ ...updatedExperience, photo: result.photo });
+      setUpdatedExperience((prevExperience) => {
+        return { ...prevExperience, photo: result.photo };
+      });
+    } catch (error) {
+      console.log("error :>> ", error);
+    }
   };
 
   useEffect(() => {
@@ -192,16 +220,16 @@ function UpdateExperience() {
 
   return (
     <div className="inputColorBox">
-      {/* <form onSubmit={handleUpdatedPhotoSubmit}>
+      <form onSubmit={handleUpdatedPhotoSubmit}>
         <label htmlFor="photo">photo</label>
         <input
           onChange={handlePhotoInputChange}
-          value={updatedExperience.photo || existingExperience?.photo}
+          //   value={updatedExperience.photo || existingExperience?.photo}
           name="photo"
           type="file"
         />
         <button type="submit">upload</button>
-      </form> */}
+      </form>
 
       <form onSubmit={handleUpdateExperience}>
         <br />
@@ -223,19 +251,6 @@ function UpdateExperience() {
         />
         <br />
         <br />
-        <label htmlFor="country">country:</label>
-        <input
-          onChange={handleLocationInputChange}
-          value={
-            updatedExperience.location.country ||
-            existingExperience?.location.country ||
-            ""
-          }
-          name="country"
-          type="text"
-        />
-        <br />
-        <br />
         <label htmlFor="city">city:</label>
         <input
           onChange={handleLocationInputChange}
@@ -245,6 +260,19 @@ function UpdateExperience() {
             ""
           }
           name="city"
+          type="text"
+        />
+        <br />
+        <br />
+        <label htmlFor="country">country:</label>
+        <input
+          onChange={handleLocationInputChange}
+          value={
+            updatedExperience.location.country ||
+            existingExperience?.location.country ||
+            ""
+          }
+          name="country"
           type="text"
         />
         <br />
