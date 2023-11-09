@@ -2,13 +2,6 @@ import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Experience } from "../types/customTypes";
 
-// fields to update in a state
-// all fields to update in object, take
-// when submit form, you call the function
-// pass arguments that you need to update
-
-// pass all the values, and if there's no update, keep and only call the update function for the values that changed
-
 function UpdateExperience() {
   const { experienceId } = useParams();
   console.log("experienceId :>> ", experienceId);
@@ -42,50 +35,6 @@ function UpdateExperience() {
   const [updatedPhoto, setUpdatedPhoto] = useState<File | string>("");
 
   const navigateTo = useNavigate();
-
-  const fetchExistingData = async () => {
-    const requestOptions = {
-      method: "GET",
-    };
-
-    try {
-      const response = await fetch(
-        `http://localhost:5005/api/experiences/id/${experienceId}`,
-        requestOptions
-      );
-
-      if (response.ok) {
-        const results = await response.json();
-        console.log("results on Update :>> ", results);
-        setExistingExperience(results.data);
-        console.log("existingExperience :>> ", existingExperience);
-      }
-    } catch (error) {
-      console.log("error in your update comp:>> ", error);
-    }
-  };
-
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setUpdatedExperience({ ...updatedExperience, [name]: value }); //!
-  };
-
-  const handleTypeInputChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    console.log("e.target.value :>> ", e.target.value);
-    setUpdatedExperience({
-      ...updatedExperience,
-      experienceType: e.target.value, //!
-    });
-  };
-
-  const handlePhotoInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log("e :>> ", e);
-    setUpdatedPhoto(e.target.files?.[0] || "");
-  };
-
-  const handleUpdatedPhotoSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); //! DO i need this or do i just do it as part of my updateFetch
-  };
 
   const handleUpdateExperience = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -166,11 +115,80 @@ function UpdateExperience() {
     navigateTo("/experiences");
   };
 
+  const fetchExistingData = async () => {
+    const requestOptions = {
+      method: "GET",
+    };
+
+    try {
+      const response = await fetch(
+        `http://localhost:5005/api/experiences/id/${experienceId}`,
+        requestOptions
+      );
+
+      if (response.ok) {
+        const results = await response.json();
+        console.log("results on Update :>> ", results);
+        setExistingExperience(results.data);
+        console.log("existingExperience :>> ", existingExperience);
+      }
+    } catch (error) {
+      console.log("error in your update comp:>> ", error);
+    }
+  };
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    console.log("value, name :>> ", value, name);
+    setUpdatedExperience((prevExperience) => ({
+      ...prevExperience,
+      [name]: value,
+    }));
+  };
+
+  const handleTypeInputChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    console.log("e.target.value :>> ", e.target.value);
+    setUpdatedExperience({
+      ...updatedExperience,
+      experienceType: e.target.value,
+    });
+  };
+
+  const handleLocationInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setUpdatedExperience((prevExperience) => ({
+      ...prevExperience,
+      location: {
+        ...prevExperience.location,
+        [name]: value,
+      },
+    }));
+  };
+
+  const handlePhotoInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    console.log("e :>> ", e);
+    setUpdatedPhoto(e.target.files?.[0] || "");
+  };
+
+  const handleUpdatedPhotoSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); //! DO i need this or do i just do it as part of my updateFetch
+  };
+
   useEffect(() => {
-    setExistingExperience(existingExperience);
-    setUpdatedExperience(updatedExperience);
+    // setExistingExperience(existingExperience);
+    // setUpdatedExperience(updatedExperience);
     fetchExistingData();
   }, []);
+
+  useEffect(() => {
+    fetchExistingData();
+  }, []);
+
+  useEffect(() => {
+    if (existingExperience) {
+      setUpdatedExperience(existingExperience);
+    }
+  }, [existingExperience]);
 
   return (
     <div className="inputColorBox">
@@ -190,7 +208,7 @@ function UpdateExperience() {
         <label htmlFor="title">title:</label>
         <input
           onChange={handleInputChange}
-          value={updatedExperience.title || existingExperience?.title}
+          value={updatedExperience.title || existingExperience?.title || ""}
           name="title"
           type="text"
         />
@@ -199,7 +217,7 @@ function UpdateExperience() {
         <label htmlFor="caption">caption:</label>
         <input
           onChange={handleInputChange}
-          value={updatedExperience.caption || existingExperience?.caption}
+          value={updatedExperience.caption || existingExperience?.caption || ""}
           name="caption"
           type="text"
         />
@@ -207,10 +225,11 @@ function UpdateExperience() {
         <br />
         <label htmlFor="country">country:</label>
         <input
-          onChange={handleInputChange}
+          onChange={handleLocationInputChange}
           value={
             updatedExperience.location.country ||
-            existingExperience?.location.country
+            existingExperience?.location.country ||
+            ""
           }
           name="country"
           type="text"
@@ -219,9 +238,11 @@ function UpdateExperience() {
         <br />
         <label htmlFor="city">city:</label>
         <input
-          onChange={handleInputChange}
+          onChange={handleLocationInputChange}
           value={
-            updatedExperience.location.city || existingExperience?.location.city
+            updatedExperience.location.city ||
+            existingExperience?.location.city ||
+            ""
           }
           name="city"
           type="text"
@@ -235,7 +256,8 @@ function UpdateExperience() {
           name="experienceType"
           value={
             updatedExperience.experienceType ||
-            existingExperience?.experienceType
+            existingExperience?.experienceType ||
+            ""
           }
         >
           <option value="search">Search</option>
@@ -249,7 +271,9 @@ function UpdateExperience() {
         <input
           name="text_body"
           onChange={handleInputChange}
-          value={updatedExperience.text_body || existingExperience?.text_body}
+          value={
+            updatedExperience.text_body || existingExperience?.text_body || ""
+          }
           id="textInput"
           type="text"
         />
