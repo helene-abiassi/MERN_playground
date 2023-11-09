@@ -7,11 +7,6 @@ function NavBar() {
 
   console.log("user :>> ", user);
 
-  // useEffect(() => {
-  //   console.log("user in PROFILE :>> ", user);
-  //   console.log("isLoggedIn :>> ", isLoggedIn);
-  //   // setIsLoggedIn(true);
-  // }, [isLoggedIn]);
 
   return (
     <>
