@@ -6,6 +6,7 @@ import BackButton from "../components/BackButton";
 import { formatDate } from "../components/Functions";
 import { AuthContext } from "../context/AuthContext";
 import { Experience } from "../types/customTypes";
+import { ExperiencesContext } from "../context/ExperiencesContext";
 
 function ExperienceDetails() {
   const location = useLocation();
@@ -14,6 +15,8 @@ function ExperienceDetails() {
   const { _id } = experience as Experience;
 
   const { user } = useContext(AuthContext);
+  const { deleteExperience, bookmarkExperience } =
+    useContext(ExperiencesContext);
 
   const navigateTo = useNavigate();
 
@@ -21,38 +24,14 @@ function ExperienceDetails() {
   console.log("experience._id in Details :>> ", experience._id);
   console.log("user DETAILS page :>> ", user);
 
-  const handleDeleteExperience = async (experienceId: string) => {
-    const token = localStorage.getItem("token");
+  const handleDeleteExperience = async (experienceID: string) => {
+    deleteExperience(experienceID);
+    navigateTo("/experiences");
+  };
 
-    if (!token) {
-      console.log("Token not found!");
-    }
-    const myHeaders = new Headers();
-    myHeaders.append("Authorization", `Bearer ${token}`);
-
-    const requestOptions = {
-      method: "DELETE",
-      headers: myHeaders,
-    };
-
-    try {
-      if (window.confirm("Are you SURE you want to delete your submission?")) {
-        const response = await fetch(
-          `http://localhost:5005/api/experiences/deleteexperience/${experienceId}`,
-          requestOptions
-        );
-        console.log("Response status:", response.status);
-
-        if (response.ok) {
-          console.log("experience deleted successfully!");
-          navigateTo("/experiences");
-        } else {
-          console.log("error with response when deleting experience");
-        }
-      }
-    } catch (error) {
-      console.log("error when deleting experience:>> ", error);
-    }
+  const handleBookmarkExperience = async (experienceID: string) => {
+    bookmarkExperience(experienceID);
+    alert("Added to bookmarks!"); //!Replace with toast or just color change
   };
 
   useEffect(() => {
@@ -87,6 +66,13 @@ function ExperienceDetails() {
         alt=""
       />
       <div className="textBox">
+        <button
+          onClick={() => {
+            handleBookmarkExperience(experience._id);
+          }}
+        >
+          Bookmark
+        </button>
         {user?.email === experience.author.email && (
           <button
             onClick={() => {
@@ -96,9 +82,11 @@ function ExperienceDetails() {
             Delete
           </button>
         )}{" "}
-        <Link style={{ backgroundColor: "black" }} to={`/update/${_id}`}>
-          Edit
-        </Link>
+        {user?.email === experience.author.email && (
+          <Link style={{ backgroundColor: "black" }} to={`/update/${_id}`}>
+            Edit
+          </Link>
+        )}{" "}
         <p>Bookmarks: {experience.bookmarked_by.length}</p>
         <p>{experience.caption}</p>
         <p>{formatDate(experience.publication_date)}</p>
