@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  addBookmark,
   deleteComment,
   deleteExperience,
   getAllExperiences,
@@ -7,6 +8,7 @@ import {
   getExperiencesByCountry,
   getExperiencesById,
   getExperiencesByType,
+  removeBookmark,
   submitComment,
   submitExperience,
   updateExperience,
@@ -35,9 +37,11 @@ router.post(
   uploadMultiplePhotos
 );
 router.post("/updateexperience", jwtAuth, updateExperience);
+router.post("/bookmarkexperience/:_id", jwtAuth, addBookmark);
 
 //DELETE Routes
 router.delete("/deletecomment/:_id", jwtAuth, deleteComment);
 router.delete("/deleteexperience/:_id", jwtAuth, deleteExperience);
+router.delete("/removebookmark/:_id", jwtAuth, removeBookmark);
 
 export default router;
