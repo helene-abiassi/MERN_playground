@@ -14,8 +14,6 @@ function ProfileCard() {
   };
 
   const updateProfile = () => {
-    // do whaterever to update (fetch)
-    //when you get the result (ok result) -> getProfile()
   };
   const handleLogOut = () => {
     logOut();
