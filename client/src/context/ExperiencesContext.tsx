@@ -15,6 +15,7 @@ interface ExperiencesContextType {
   fetchExperiences: () => Promise<void>;
   deleteExperience: (experienceID: string) => void;
   bookmarkExperience: (experienceID: string) => void;
+  removeBookmark: (experienceID: string) => void;
   // loading: boolean;
   // error: string;
 }
@@ -23,6 +24,8 @@ const initialContext: ExperiencesContextType = {
   // urlParams: "all",
   fetchExperiences: () => Promise.resolve(),
   deleteExperience: (experienceID: string) =>
+    console.log("context not initialized"),
+  removeBookmark: (experienceID: string) =>
     console.log("context not initialized"),
   bookmarkExperience: (experienceID: string) =>
     console.log("context not initialized"),
@@ -106,9 +109,47 @@ export const ExperiencesContextProvider = (props: ProviderPropsType) => {
       if (response.ok) {
         const data = await response.json();
         console.log("data :>> ", data);
+        fetchExperiences();
       }
     } catch (error) {
       console.log("error :>> ", error);
+    }
+  };
+
+  const removeBookmark = async (experienceID: string) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.log("No token available!");
+    }
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+    myHeaders.append("Authorization", `Bearer ${token}`);
+
+    const urlencoded = new URLSearchParams();
+    urlencoded.append("email", user!.email);
+
+    const requestOptions = {
+      method: "DELETE",
+      headers: myHeaders,
+      body: urlencoded,
+    };
+    try {
+      const response = await fetch(
+        `http://localhost:5005/api/experiences/removebookmark/${experienceID}`,
+        requestOptions
+      );
+
+      console.log("response remvBok :>> ", response);
+
+      if (response.ok) {
+        const results = await response.json();
+
+        console.log("results remvBok :>> ", results);
+        fetchExperiences();
+      }
+    } catch (error) {
+      console.log("error when removing bookmark:>> ", error);
     }
   };
 
@@ -156,6 +197,7 @@ export const ExperiencesContextProvider = (props: ProviderPropsType) => {
         fetchExperiences,
         deleteExperience,
         bookmarkExperience,
+        removeBookmark,
       }}
     >
       {props.children}
