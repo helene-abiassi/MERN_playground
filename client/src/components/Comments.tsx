@@ -12,10 +12,8 @@ type CommentsProps = {
 function Comments({ comments, _id }: CommentsProps) {
   const { user } = useContext(AuthContext);
   const { experiences, fetchExperiences } = useContext(ExperiencesContext);
-  // const { fetchExperiences } = useContext(ExperiencesContext);
-  // console.log("%cexperiences :>> ", "color:orange", experiences);
   const experienceID = _id;
-  // console.log("experienceID on commentsComp:>> ", experienceID);
+
 
   const [newComment, setNewComment] = useState({
     author: {
@@ -48,7 +46,6 @@ function Comments({ comments, _id }: CommentsProps) {
         const data = await response.json();
         console.log("data :>> ", data);
         setUpdatedComments(data.comments);
-        // console.log("updatedComments :>> ", data.comments);
       }
     } catch (error) {
       console.log("error :>> ", error);
@@ -94,8 +91,7 @@ function Comments({ comments, _id }: CommentsProps) {
           const data = await response.json();
           console.log("data for my new comment :>> ", data);
           const newComment: CommentsType = data.comment;
-          // fetchComments();
-          //trigger fetchExperiences function from ExperiencesContext
+
           fetchExperiences();
         } else {
           const data = await response.json();
