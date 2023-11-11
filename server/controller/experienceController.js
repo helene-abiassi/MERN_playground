@@ -17,7 +17,7 @@ const getAllExperiences = async (req, res) => {
         path: "comments",
         populate: {
           path: "author",
-          select: ["email", "username", "user_image"],
+          select: ["email", "username", "user_image", "date"],
         },
       },
       {
@@ -25,7 +25,7 @@ const getAllExperiences = async (req, res) => {
         select: ["username", "email", "bio", "member_since", "user_image"],
       },
     ])
-    .sort({ "comments.createdAt": -1 });
+    .sort({ "comments.date": -1 }); //this works on experience // sort on front-end with comments array
 
   res.json({
     number: allExperiences.length,
@@ -158,7 +158,8 @@ const getExperiencesByCity = async (req, res) => {
 };
 
 const submitExperience = async (req, res) => {
-  const photosArray = JSON.parse(req.body.photo_body);
+  // const photosArray = JSON.parse(req.body.photo_body);
+  console.log("req.body :>> ", req.body);
 
   try {
     const existingUser = await userModel.findOne({ email: req.body.email });
@@ -178,7 +179,7 @@ const submitExperience = async (req, res) => {
           },
           experienceType: req.body.experienceType,
           text_body: req.body.text_body,
-          photo_body: photosArray,
+          // photo_body: photosArray,
         });
 
         const savedSubmission = await newSubmission.save();
@@ -337,6 +338,8 @@ const deleteExperience = async (req, res) => {
 
     await commentModel.deleteMany({ experience: experienceId });
 
+    const users = await userModel.find();
+
     users.forEach(async (user) => {
       user.bookmarks = user.bookmarks.filter(
         (bookmark) => bookmark.toString() !== experienceId
@@ -448,7 +451,7 @@ const addBookmark = async (req, res) => {
 
   try {
     const existingUser = await userModel.findOne({ email: req.body.email });
-
+    //replace req.user
     if (!existingUser) {
       return res.status(401).json({
         message: "User not found or not authenticated",
@@ -483,15 +486,15 @@ const addBookmark = async (req, res) => {
 };
 
 const removeBookmark = async (req, res) => {
-  //!Doesn't work!!!
   const experienceId = req.params._id;
+  const userEmail = req.body.email;
 
   try {
-    const existingUser = await userModel.findOne({ email: req.body.email });
+    const existingUser = await userModel.findOne({ email: userEmail });
 
     if (!existingUser) {
       return res.status(401).json({
-        message: "User not found or not authenticated",
+        message: "User not found",
       });
     }
 
@@ -501,15 +504,11 @@ const removeBookmark = async (req, res) => {
       });
     }
 
-    existingUser.bookmarks = existingUser.bookmarks.filter(
-      (bookmark) => bookmark !== experienceId
-    );
+    existingUser.bookmarks.pull(experienceId);
     await existingUser.save();
 
     const experience = await experienceModel.findById(experienceId);
-    experience.bookmarked_by = experience.bookmarked_by.filter(
-      (userId) => userId.toString() !== existingUser._id.toString()
-    );
+    experience.bookmarked_by.pull(existingUser._id);
     await experience.save();
 
     res.status(200).json({
