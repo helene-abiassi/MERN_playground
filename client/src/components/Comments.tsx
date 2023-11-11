@@ -13,9 +13,9 @@ function Comments({ comments, _id }: CommentsProps) {
   const { user } = useContext(AuthContext);
   const { experiences, fetchExperiences } = useContext(ExperiencesContext);
   // const { fetchExperiences } = useContext(ExperiencesContext);
-  console.log("%cexperiences :>> ", "color:orange", experiences);
+  // console.log("%cexperiences :>> ", "color:orange", experiences);
   const experienceID = _id;
-  console.log("experienceID on commentsComp:>> ", experienceID);
+  // console.log("experienceID on commentsComp:>> ", experienceID);
 
   const [newComment, setNewComment] = useState({
     author: {
@@ -48,7 +48,7 @@ function Comments({ comments, _id }: CommentsProps) {
         const data = await response.json();
         console.log("data :>> ", data);
         setUpdatedComments(data.comments);
-        console.log("updatedComments :>> ", data.comments);
+        // console.log("updatedComments :>> ", data.comments);
       }
     } catch (error) {
       console.log("error :>> ", error);
@@ -184,13 +184,13 @@ function Comments({ comments, _id }: CommentsProps) {
       </form>
 
       <div style={{ backgroundColor: "white" }}>
-        <div>
+        {/* <div>
           {experiences && experiences.length > 0 ? (
             experiences.map((experience) => {
               return (
                 <div key={experience._id}>
                   {experience._id === experienceID &&
-                    experience.comments?.map((comment) => {
+                    experience.comments?.reverse().map((comment) => {
                       return (
                         <div key={comment._id}>
                           <img
@@ -218,7 +218,8 @@ function Comments({ comments, _id }: CommentsProps) {
           ) : (
             <p>Be the first one to leave a comment</p>
           )}
-        </div>
+        </div> */}
+       
       </div>
     </div>
   );
