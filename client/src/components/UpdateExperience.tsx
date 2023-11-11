@@ -41,6 +41,8 @@ function UpdateExperience() {
   const handleUpdateExperience = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    console.log("updatedExperience :>> ", updatedExperience);
+
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -57,9 +59,8 @@ function UpdateExperience() {
     );
     urlencoded.append(
       "caption",
-      `${updatedExperience.caption}` || `${existingExperience?.caption}` //!Getting undefined from expType, location + test if no field changes
+      `${updatedExperience.caption}` || `${existingExperience?.caption}`
     );
-    // urlencoded.append("photo", `${updatedExperience.photo}`);
     urlencoded.append(
       "country",
       `${updatedExperience?.location.country}` ||
@@ -89,6 +90,11 @@ function UpdateExperience() {
       "text_body",
       `${updatedExperience?.text_body}` || `${existingExperience?.text_body}`
     );
+    urlencoded.append(
+      "photo",
+      `${updatedExperience?.photo}` || `${existingExperience?.photo}`
+    );
+
     urlencoded.append("_id", `${experienceId}`);
 
     const requestOptions = {
@@ -193,7 +199,6 @@ function UpdateExperience() {
       const result = (await response.json()) as ExperienceImage;
       console.log("result single photo:>> ", result);
 
-      //   setUpdatedExperience({ ...updatedExperience, photo: result.photo });
       setUpdatedExperience((prevExperience) => {
         return { ...prevExperience, photo: result.photo };
       });
@@ -201,12 +206,6 @@ function UpdateExperience() {
       console.log("error :>> ", error);
     }
   };
-
-  useEffect(() => {
-    // setExistingExperience(existingExperience);
-    // setUpdatedExperience(updatedExperience);
-    fetchExistingData();
-  }, []);
 
   useEffect(() => {
     fetchExistingData();
@@ -222,12 +221,7 @@ function UpdateExperience() {
     <div className="inputColorBox">
       <form onSubmit={handleUpdatedPhotoSubmit}>
         <label htmlFor="photo">photo</label>
-        <input
-          onChange={handlePhotoInputChange}
-          //   value={updatedExperience.photo || existingExperience?.photo}
-          name="photo"
-          type="file"
-        />
+        <input onChange={handlePhotoInputChange} name="photo" type="file" />
         <button type="submit">upload</button>
       </form>
 
