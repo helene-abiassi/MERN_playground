@@ -51,7 +51,11 @@ function ExpCards({ experience }: ExperienceCardProp) {
     fetchExperiences();
   };
 
-  const handleBookmarkClick = async (experienceID: string) => {
+  const handleBookmarkClick = (experienceID: string) => {
+    if (!user) {
+      alert("You need to log in first!");
+      return;
+    }
     if (isBookmarked) {
       handleremoveBookmark(experienceID);
       alert("Removed from bookmarks!"); //!Replace with toast ++ just color change
@@ -86,6 +90,7 @@ function ExpCards({ experience }: ExperienceCardProp) {
                 <i className="fa fa-bookmark-o"></i>
               )}
             </button>
+            <p>{bookmarked_by.length}</p>
             {user?.email === experience.author.email && (
               <button
                 onClick={() => {
@@ -107,13 +112,17 @@ function ExpCards({ experience }: ExperienceCardProp) {
             <div>
               <img className="gridPhoto" src={photo} />
             </div>
-            <p>Bookmarks: {experience.bookmarked_by.length}</p>
             <p className="storyCardCaption">{caption}</p>
             <p>
               written by {author?.username}, {formatDate(publication_date)}
             </p>
             <p>Type: {experienceType}</p>
-            <Link to={`${title}`} state={{ experience: experience }}>
+            <Link
+              to={`${title}`}
+              state={{
+                experience: experience,
+              }}
+            >
               View More!!
             </Link>
           </div>
