@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { formatDate } from "./Functions";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function ProfileCard() {
   const { user, getProfile, logOut, isLoggedIn, deleteProfile } =
@@ -9,13 +9,15 @@ function ProfileCard() {
   const navigateTo = useNavigate();
 
   const handleDeleteProfile = (userID: string) => {
+    window.confirm("Are you SURE you want to delete your profile?");
+
     deleteProfile(userID);
     navigateTo("/");
   };
 
-  const updateProfile = () => {
-  };
   const handleLogOut = () => {
+    window.confirm("Are you SURE you want to log out?");
+
     logOut();
     navigateTo("/");
   };
@@ -28,6 +30,12 @@ function ProfileCard() {
   return (
     <div>
       <div className="profileColumns">
+        <Link
+          style={{ backgroundColor: "black" }}
+          to={`/updateprofile/${user!._id}`}
+        >
+          Edit
+        </Link>
         <button onClick={handleLogOut}>log out</button>
         <button
           onClick={() => {
@@ -47,7 +55,7 @@ function ProfileCard() {
             member since:{formatDate(user?.member_since)}
           </p>
           <p className="inputKeys">bio:{user?.bio}</p>
-          <p>Bookmarks: {user?.bookmarks.length}</p>
+          <p>Bookmarks:</p>
           {user?.bookmarks &&
             user.bookmarks.map((bookmark, bookInd) => {
               return (
@@ -59,13 +67,14 @@ function ProfileCard() {
                   />
                   <p>{bookmark.title}</p>
                   <p>{bookmark.publication_date}</p>
+                  <p>by {bookmark.author.username}</p>
                   <p>
                     {bookmark.location.country}, {bookmark.location.city}
                   </p>
                 </div>
               );
             })}
-          <p>Submissions: {user?.submissions.length}</p>
+          <p>Submissions:</p>
           {/* //!Add conditional rendering for length<0, no submissions posted yet */}
           {user?.submissions &&
             user.submissions.map((submission, submInd) => {
@@ -77,6 +86,7 @@ function ProfileCard() {
                     alt={submission.title}
                   />
                   <p>{submission.title}</p>
+                  <p>by you</p>
                   <p>{submission.publication_date}</p>
                   <p>
                     {submission.location.country}, {submission.location.city}
