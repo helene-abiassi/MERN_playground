@@ -1,16 +1,59 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 // import { Experience } from "../types/customTypes";
 import ExpCards from "./ExpCard";
 import { ExperiencesContext } from "../context/ExperiencesContext";
 import Loader from "./Loader";
-
-export interface SearchProps {
-  urlParams: string | null;
-}
+import SearchBox from "./SearchBox";
 
 function ExpLayout() {
   const { experiences, fetchExperiences } = useContext(ExperiencesContext);
+  const [filteredExperiences, setFilteredExperiences] = useState(experiences);
+  const handleSearch = (criteria: string) => {
+    if (!experiences) {
+      return;
+    }
+
+    let sortedExperiences = [...experiences];
+
+    switch (criteria) {
+      case "":
+        sortedExperiences = sortedExperiences.sort(
+          (a, b) =>
+            new Date(b.publication_date).getTime() -
+            new Date(a.publication_date).getTime()
+        );
+        break;
+      case "Most Bookmarked":
+        sortedExperiences = sortedExperiences.sort(
+          (a, b) => b.bookmarked_by.length - a.bookmarked_by.length
+        );
+        break;
+      case "Newest":
+        sortedExperiences = sortedExperiences.sort(
+          (a, b) =>
+            new Date(b.publication_date).getTime() -
+            new Date(a.publication_date).getTime()
+        );
+        break;
+      case "Oldest":
+        sortedExperiences = sortedExperiences.sort(
+          (a, b) =>
+            new Date(a.publication_date).getTime() -
+            new Date(b.publication_date).getTime()
+        );
+        break;
+      case "Most Commented":
+        sortedExperiences = sortedExperiences.sort(
+          (a, b) => b.comments!.length - a.comments!.length
+        );
+        break;
+      default:
+        break;
+    }
+
+    setFilteredExperiences(sortedExperiences);
+  };
 
   useEffect(() => {
     fetchExperiences();
@@ -32,21 +75,37 @@ function ExpLayout() {
       </nav>
       <Outlet />
       <div>
-        <div className="RecipeContainer">
-          {experiences ? (
-            experiences.map((experience, expID) => {
-              return (
+        <SearchBox onSearch={handleSearch} />
+        <div>
+          {filteredExperiences && filteredExperiences.length > 0 ? (
+            filteredExperiences.map((experience, expID) => (
+              <div key={expID}>
+                <ExpCards
+                  key={"1" + experience.publication_date}
+                  experience={experience}
+                />
+              </div>
+            ))
+          ) : experiences && experiences.length > 0 ? (
+            experiences
+              .slice()
+              .sort(
+                (a, b) =>
+                  new Date(b.publication_date).getTime() -
+                  new Date(a.publication_date).getTime()
+              )
+              .map((experience, expID) => (
                 <div key={expID}>
                   <ExpCards
                     key={"1" + experience.publication_date}
                     experience={experience}
                   />
                 </div>
-              );
-            })
+              ))
           ) : (
             <h2>...something went wrong...</h2>
           )}
+
         </div>
       </div>
     </div>
