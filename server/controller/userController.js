@@ -1,6 +1,8 @@
 import { v2 as cloudinary } from "cloudinary";
 import userModel from "../models/userModel.js";
 import { experienceModel } from "../models/experienceModel.js";
+import { commentModel } from "../models/commentModel.js";
+
 import { hashPassword, verifyPassword } from "../utilities/passwordServices.js";
 import { generateToken } from "../utilities/tokenServices.js";
 
@@ -204,6 +206,8 @@ const getProfile = async (req, res) => {
   }
 };
 
+
+
 const deleteUser = async (req, res) => {
   const userId = req.params._id;
 
@@ -218,9 +222,13 @@ const deleteUser = async (req, res) => {
 
     if (!deletedUser) {
       return res.status(404).json({
-        msg: "Experience not found",
+        msg: "User not found",
       });
     }
+
+    await experienceModel.deleteMany({ author: userId });
+
+    await commentModel.deleteMany({ author: userId });
 
     res.status(200).json({
       msg: "User deleted successfully",
@@ -235,10 +243,14 @@ const deleteUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const elementName = req.body.elementName;
-  const elementValue = req.body.elementValue;
-  const filter = { email: req.body.email };
-  const update = { [`${elementName}`]: elementValue };
+  const filter = { _id: req.body._id };
+  const update = {
+    email: req.body.email,
+    username: req.body.username,
+    bio: req.body.bio,
+    user_image: req.body.user_image,
+  };
+
   try {
     const updatedUser = await userModel.findOneAndUpdate(filter, update, {
       new: true,
