@@ -1,4 +1,5 @@
 import { ChangeEvent, useEffect, useState } from "react";
+import "../styles/SearchBox.css";
 
 export interface SearchBoxProps {
   onCriteriaSearch: (criteria: string) => void;
@@ -31,6 +32,14 @@ function SearchBox({ onCriteriaSearch, onCitySearch }: SearchBoxProps) {
     onCitySearch(searchCityInput);
   };
 
+  const resetFilters = () => {
+    setSearchCriteria("");
+    setSearchCity("");
+    setSearchCityInput("");
+    onCriteriaSearch("");
+    onCitySearch("");
+  };
+
   useEffect(() => {
     // onCriteriaSearch("")
     // handleSearchClick();
@@ -57,11 +66,13 @@ function SearchBox({ onCriteriaSearch, onCitySearch }: SearchBoxProps) {
           <button className="searchButton" onClick={handleSearchClick}>
             Search
           </button>
+          <button className="resetButton" onClick={resetFilters}>
+            Reset
+          </button>
         </div>
       </div>
     </div>
   );
-
 }
 
 export default SearchBox;
