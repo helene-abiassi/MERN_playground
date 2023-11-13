@@ -73,7 +73,7 @@ function ExpLayout() {
   }, []);
 
   return (
-    <div>
+    <div className="mainBodyExp">
       <h1>experiences</h1>
       <nav className="expTypeNavbar">
         <NavLink to={"all"}>all</NavLink> <span> | </span>
@@ -86,6 +86,7 @@ function ExpLayout() {
         <span> | </span>
         <NavLink to={"wildlife"}>fauna & flora</NavLink>
       </nav>
+      {/* <br /> */}
       <Outlet />
       <div>
         <SearchBox
