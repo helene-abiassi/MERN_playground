@@ -16,6 +16,8 @@ interface ExperiencesContextType {
   deleteExperience: (experienceID: string) => void;
   bookmarkExperience: (experienceID: string) => void;
   removeBookmark: (experienceID: string) => void;
+  // setUrlParams: (urlParams: string) => void;
+
   // loading: boolean;
   // error: string;
 }
@@ -29,6 +31,8 @@ const initialContext: ExperiencesContextType = {
     console.log("context not initialized"),
   bookmarkExperience: (experienceID: string) =>
     console.log("context not initialized"),
+  // setUrlParams: () => console.log("context not initialized"),
+
   // loading: true,
   // error: "",
 };
@@ -44,13 +48,6 @@ export const ExperiencesContextProvider = (props: ProviderPropsType) => {
   const [experiences, setExperiences] = useState<Experience[] | null>(null);
 
   const { user } = useContext(AuthContext);
-  //FIXME think about the use of urlParams in a context (no specific url to be at when the context is rendered)
-
-  // const [urlParams, setUrlParams] = useState("all");
-
-  // const { data, error, loading } = useMyFetch<Experience[]>(
-  //   `http://localhost:5005/api/experiences/${urlParams}`
-  // );
 
   const fetchExperiences = async () => {
     const requestOptions = {
@@ -65,7 +62,7 @@ export const ExperiencesContextProvider = (props: ProviderPropsType) => {
 
       if (results.status === 200) {
         const data = await results.json();
-        // console.log("data :>> ", data);
+        console.log("data  of fetchExp:>> ", data);
         const experienceList = data.data as Experience[];
 
         console.log("experienceList :>> ", experienceList);
