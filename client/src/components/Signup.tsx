@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import "../styles/logUp.css";
 import "../styles/Home.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { User, UserImage } from "../types/customTypes";
 
 function Signup() {
@@ -50,6 +50,8 @@ function Signup() {
     setShowOrHide("show");
   };
 
+  const navigateTo = useNavigate();
+
   const handleFileInput = (e: ChangeEvent<HTMLInputElement>) => {
     setSelectedFile(e.target.files?.[0] || "");
   };
@@ -87,6 +89,24 @@ function Signup() {
   const handleSubmitRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const { email, password, username } = newUser;
+
+    if (username.trim() === "") {
+      alert("Username cannot be empty");
+      return;
+    } else if (!email.includes("@") && password.length < 6) {
+      alert(
+        "Your email seems to be invalid. \n Your password should be at least 6 characters"
+      );
+      return;
+    } else if (password.length < 6) {
+      alert("Your password should be at least 6 characters");
+      return;
+    } else if (!email.includes("@")) {
+      alert("Your email seems to be invalid");
+      return;
+    }
+
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
 
@@ -111,6 +131,8 @@ function Signup() {
       );
       const result = await response.json();
       console.log("result after Signup :>> ", result);
+      alert("Congrats!");
+      navigateTo("/login");
     } catch (error) {
       console.log("error :>> ", error);
     }
@@ -119,8 +141,6 @@ function Signup() {
   useEffect(() => {
     setNewUser(newUser);
   }, []);
-
-  // <Navigate to={"/profile"} />
 
   return (
     <>
@@ -156,6 +176,7 @@ function Signup() {
               name="username"
               type="text"
               style={{ maxWidth: "200px" }}
+              required
             />
           </div>
           <br />
@@ -168,6 +189,7 @@ function Signup() {
                 onChange={handleRegisterInput}
                 name="email"
                 type="text"
+                required
               />
               <p>* required</p>
             </div>
@@ -179,6 +201,7 @@ function Signup() {
                 name="password"
                 placeholder="enter password..."
                 type={passwordType}
+                required
               />
               <button
                 onClick={changePasswordType}
