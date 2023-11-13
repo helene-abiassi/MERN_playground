@@ -26,6 +26,7 @@ router.get("/all", getAllExperiences);
 router.get("/id/:_id", getExperiencesById);
 router.get("/type/:experienceType", getExperiencesByType);
 router.get("/country/:country", getExperiencesByCountry);
+router.get("/city/:city", getExperiencesByCity);
 
 //POST Routes
 router.post("/experiencesubmission", submitExperience);
