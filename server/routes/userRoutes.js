@@ -8,6 +8,7 @@ import {
   signUp,
   updateUser,
   uploadImage,
+  getUserByEmail,
 } from "../controller/userController.js";
 import { multerUpload } from "../middlewares/multer.js";
 import jwtAuth from "../middlewares/jwtAuth.js";
@@ -17,6 +18,8 @@ const router = express.Router();
 //GET Routes
 router.get("/all", getAllUsers);
 router.get("/id/:_id", getUserById);
+router.get("/email/:email", getUserByEmail);
+
 router.get("/profile", jwtAuth, getProfile);
 
 //POST Routes
