@@ -25,7 +25,9 @@ import Submit from "./views/Submit";
 import { ExperiencesContextProvider } from "./context/ExperiencesContext";
 import { AuthContextProvider } from "./context/AuthContext";
 import ExperienceWithCHook from "./components/ExperienceWithCHook";
+import UpdateProfile from "./components/UpdateProfile";
 import Update from "./views/Update";
+import UpdateProfileView from "./views/UpdateProfile";
 
 function App() {
   const router = createBrowserRouter(
@@ -44,10 +46,19 @@ function App() {
           element={<ExperienceDetails />}
         />
         <Route
-          path="update/:experienceId"
+          path="updateexperience/:experienceId"
           element={
             <ProtectedRoute>
               <Update />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="updateprofile/:profileId"
+          element={
+            <ProtectedRoute>
+              <UpdateProfileView />
             </ProtectedRoute>
           }
         />
