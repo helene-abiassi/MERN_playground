@@ -11,9 +11,16 @@ const jwtPassportStrategy = new JwtStrategy(opts, async function (
   done
 ) {
   try {
-    const user = await userModel
-      .findById(jwt_payload.sub)
-      .populate([{ path: "bookmarks" }, { path: "submissions" }]);
+    const user = await userModel.findById(jwt_payload.sub).populate([
+      {
+        path: "bookmarks",
+        populate: { path: "author", select: ["username"] },
+      },
+      {
+        path: "submissions",
+        populate: { path: "author", select: ["username"] },
+      },
+    ]);
     console.log("user in passport :>> ", user);
     if (user) {
       return done(null, user);
