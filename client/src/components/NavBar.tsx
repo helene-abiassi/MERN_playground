@@ -5,9 +5,6 @@ import { AuthContext } from "../context/AuthContext";
 function NavBar() {
   const { user, isLoggedIn } = useContext(AuthContext);
 
-  console.log("user :>> ", user);
-
-
   return (
     <>
       <nav>
@@ -16,7 +13,7 @@ function NavBar() {
             <img
               style={{ cursor: "pointer" }}
               className="mainLogo"
-              src="https://res.cloudinary.com/dfm1r4ikr/image/upload/v1697317643/voyageApp/logo-variations-02_uffxcy.png"
+              src="https://res.cloudinary.com/dfm1r4ikr/image/upload/v1699830493/voyageApp/logo-variations-01_atukuy.png"
               alt="voyage-logo"
             />
           </NavLink>
