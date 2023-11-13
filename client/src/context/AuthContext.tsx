@@ -111,12 +111,11 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
 
         if (response.ok) {
           const result = await response.json();
-          console.log("result to get my user profile :>> ", result);
+          // console.log("result to get my user profile :>> ", result);
           const user = result.userProfile as User;
 
           setUser(user);
           setIsLoggedIn(true);
-          //!ADD before catch password and email validation
         }
       } catch (err) {
         const error = err as Error;
@@ -194,7 +193,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
           console.log("result to get my user profile :>> ", result); //This works
           const user = result.userProfile as User;
           setUser(user);
-          console.log("user is set");
+          // console.log("user is set");
           setIsLoggedIn(true);
           setIsLoading(false);
         } else {
@@ -214,37 +213,8 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     }
   };
 
-  const updateUser = () => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      console.log("no token available");
-    }
-
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
-    myHeaders.append("Authorization", `Bearer ${token}`);
-
-    const urlencoded = new URLSearchParams();
-    urlencoded.append("elementName", "username");
-    urlencoded.append("elementValue", "Stella Bella");
-    urlencoded.append("email", "stella@test.com");
-
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: urlencoded,
-      redirect: "follow",
-    };
-
-    fetch("http://localhost:5005/api/users/updateuser", requestOptions)
-      .then((response) => response.text())
-      .then((result) => console.log(result))
-      .catch((error) => console.log("error", error));
-  };
-
   useEffect(() => {
-    console.log("checking if user is logged in");
+    // console.log("checking if user is logged in");
 
     authenticateUser();
   }, [user?.username]);
