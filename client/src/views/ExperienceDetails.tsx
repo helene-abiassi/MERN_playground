@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../styles/DetailsPage.css";
 import Comments from "../components/Comments";
 import BackButton from "../components/BackButton";
@@ -12,17 +12,23 @@ function ExperienceDetails() {
   const location = useLocation();
   const { experience } = location.state;
 
-  const { _id } = experience as Experience;
+  const { _id, bookmarked_by } = experience as Experience;
 
   const { user } = useContext(AuthContext);
-  const { deleteExperience, bookmarkExperience } =
-    useContext(ExperiencesContext);
+  const {
+    deleteExperience,
+    bookmarkExperience,
+    fetchExperiences,
+    removeBookmark,
+    experiences,
+  } = useContext(ExperiencesContext);
+
+  const isBookmarkedInitially =
+    user && user.bookmarks.some((bookmark) => bookmark._id === _id);
+  const [isBookmarked, setIsBookmarked] = useState(isBookmarkedInitially);
+  console.log("isBookmarked :>> ", isBookmarked);
 
   const navigateTo = useNavigate();
-
-  console.log("experience in my Details page :>> ", experience);
-  console.log("experience._id in Details :>> ", experience._id);
-  console.log("user DETAILS page :>> ", user);
 
   const handleDeleteExperience = async (experienceID: string) => {
     deleteExperience(experienceID);
@@ -31,12 +37,38 @@ function ExperienceDetails() {
 
   const handleBookmarkExperience = async (experienceID: string) => {
     bookmarkExperience(experienceID);
-    alert("Added to bookmarks!"); //!Replace with toast or just color change
+    console.log("after bookmark/ before fetvh :>> ");
+    fetchExperiences();
+    console.log("after fetch:>> ");
   };
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [experience.title]);
+  const handleremoveBookmark = async (experienceID: string) => {
+    removeBookmark(experienceID);
+    fetchExperiences();
+  };
+
+  const handleBookmarkClick = (experienceID: string) => {
+    if (!user) {
+      alert("You need to log in first!");
+      return;
+    }
+    if (isBookmarked) {
+      handleremoveBookmark(experienceID);
+      alert("Removed from bookmarks!");
+    } else {
+      handleBookmarkExperience(experienceID);
+      alert("Added to bookmarks!");
+    }
+    fetchExperiences();
+    setIsBookmarked(!isBookmarked);
+  };
+
+  useEffect(() => {}, [
+    bookmarked_by,
+    fetchExperiences,
+    experiences,
+    experience.comments,
+  ]);
 
   return (
     <div>
@@ -68,11 +100,24 @@ function ExperienceDetails() {
       <div className="textBox">
         <button
           onClick={() => {
-            handleBookmarkExperience(experience._id);
+            handleBookmarkClick(_id);
+          }}
+          style={{
+            fontSize: "16px",
+            backgroundColor: isBookmarked ? "black" : "white",
+            color: isBookmarked ? "white" : "black",
           }}
         >
-          Bookmark
+          {isBookmarked ? (
+            <i className="fa fa-bookmark"></i>
+          ) : (
+            <i className="fa fa-bookmark-o"></i>
+          )}
         </button>
+        <p>{bookmarked_by.length}</p>
+        {/* <button onClick={() => handleBookmarkClick(experience._id)}>
+          {isBookmarked ? "Remove Bookmark" : "Add Bookmark"}
+        </button> */}
         {user?.email === experience.author.email && (
           <button
             onClick={() => {
@@ -83,11 +128,13 @@ function ExperienceDetails() {
           </button>
         )}{" "}
         {user?.email === experience.author.email && (
-          <Link style={{ backgroundColor: "black" }} to={`/update/${_id}`}>
+          <Link
+            style={{ backgroundColor: "black" }}
+            to={`/updateexperience/${_id}`}
+          >
             Edit
           </Link>
         )}{" "}
-        <p>Bookmarks: {experience.bookmarked_by.length}</p>
         <p>{experience.caption}</p>
         <p>{formatDate(experience.publication_date)}</p>
         <hr />
