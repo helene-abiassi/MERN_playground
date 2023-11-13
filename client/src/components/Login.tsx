@@ -27,9 +27,6 @@ function Login() {
     user,
   } = useContext(AuthContext);
 
-  // const [loginCredentials, setLoginCredentials] =
-  //   useState<LogInCredentials | null>(null);
-  // const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [passwordType, setPasswordType] = useState("password");
   const [showOrHide, setShowOrHide] = useState("show");
   const changePasswordType = () => {
@@ -54,8 +51,44 @@ function Login() {
 
   const handleSubmitLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    logIn();
-    navigateTo("/profile");
+
+    const { email, password } = loginCredentials as LogInCredentials;
+
+    if (!email.includes("@") && password.length < 6) {
+      alert(
+        "Your email seems to be invalid. Your password should be at least 6 characters"
+      );
+      return;
+    } else if (password.length < 6) {
+      alert("Your password should be at least 6 characters");
+      return;
+    } else if (!email.includes("@")) {
+      alert("Your email seems to be invalid");
+      return;
+    } else {
+      const requestOptions = {
+        method: "GET",
+      };
+
+      try {
+        const response = await fetch(
+          `http://localhost:5005/api/users/email/${email}`,
+          requestOptions
+        );
+        const result = await response.json();
+        console.log("result of Email Find :>> ", result);
+
+        if (result.data.length > 0) {
+          logIn();
+          navigateTo("/profile");
+        } else {
+          alert("This email does not exist in the database. Sign up first");
+          navigateTo("/signup");
+        }
+      } catch (error) {
+        console.error("Error checking email existence:", error);
+      }
+    }
   };
 
   // const isUserLoggedIn = () => {
@@ -83,6 +116,7 @@ function Login() {
                 onChange={handleLoginInput}
                 name="email"
                 type="text"
+                required
               />
               <p>* required</p>
             </div>
@@ -94,6 +128,7 @@ function Login() {
                 name="password"
                 placeholder="enter password..."
                 type={passwordType}
+                required
               />
               <button
                 onClick={changePasswordType}
