@@ -7,7 +7,7 @@ const experienceSchema = new mongoose.Schema({
   },
   title: {
     type: String,
-    required: true,
+    // required: true,
   },
   caption: {
     type: String,
@@ -24,11 +24,11 @@ const experienceSchema = new mongoose.Schema({
   location: {
     country: {
       type: String,
-      required: true,
+      // required: true,
     },
     city: {
       type: String,
-      required: true,
+      // required: true,
     },
     longitude: {
       type: String,
