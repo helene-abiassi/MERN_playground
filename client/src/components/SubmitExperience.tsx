@@ -4,7 +4,7 @@ import "../styles/Home.css";
 import "../styles/Experiences.css";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-// import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";w
+// import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
 function SubmitExperience() {
   const [displayPhoto, setDisplayPhoto] = useState<File | string>("");
@@ -176,8 +176,8 @@ function SubmitExperience() {
     } catch (error) {
       console.log("error :>> ", error);
     }
-    alert("yey!"); //!Replace with modal/toast ++ redirect to story page
-    navigateTo("/experiences"); //Template literal
+    alert("experience posted!!");
+    navigateTo("/experiences");
     console.log("newExperience :>> ", newExperience);
   };
 
@@ -210,13 +210,13 @@ function SubmitExperience() {
     <div>
       <div className="inputColorBox">
         <form onSubmit={handleDisplayPhotoSubmit}>
-          photo
+          photo*
           <input onChange={handlePhotoInput} name="photo" type="file" />
           <button type="submit">upload</button>
         </form>
         <br />
         <form onSubmit={handlePhotoAlbumSubmit}>
-          photo album:
+          photo album
           <input
             onChange={handlePhotoAlbumInput}
             multiple
@@ -224,41 +224,67 @@ function SubmitExperience() {
             type="file"
           />
           <button type="submit">upload</button>
-          <figcaption>*you can upload up to 4 photos</figcaption>
+          <figcaption>{"{you can upload up to 4 photos}"}</figcaption>
         </form>
         <br />
         <form onSubmit={handleSubmitExperience}>
           <br />
-          <label htmlFor="title">title:</label>
-          <input onChange={handleFormInput} name="title" type="text" />
+          <label htmlFor="title">title*</label>
+          <input onChange={handleFormInput} name="title" type="text" required />
           <br />
           <br />
-          <label htmlFor="caption">caption:</label>
-          <input onChange={handleFormInput} name="caption" type="text" />
+          <label htmlFor="caption">caption*</label>
+          <input
+            onChange={handleFormInput}
+            name="caption"
+            type="text"
+            required
+          />
           <br />
           <br />
-          <label htmlFor="country">country:</label>
-          <input onChange={handleLocationInput} name="country" type="text" />
+          <label htmlFor="country">country*</label>
+          <input
+            onChange={handleLocationInput}
+            name="country"
+            type="text"
+            required
+          />
           <br />
           <br />
-          <label htmlFor="city">city:</label>
-          <input onChange={handleLocationInput} name="city" type="text" />
+          <label htmlFor="city">city*</label>
+          <input
+            onChange={handleLocationInput}
+            name="city"
+            type="text"
+            required
+          />
           <br />
           <br />
-          <label htmlFor="longitude">longitude:</label>
-          <input onChange={handleLocationInput} name="longitude" type="text" />
+          <label htmlFor="longitude">longitude*</label>
+          <input
+            onChange={handleLocationInput}
+            name="longitude"
+            type="text"
+            required
+          />
           <br />
           <br />
-          <label htmlFor="latitude">latitude:</label>
-          <input onChange={handleLocationInput} name="latitude" type="text" />
+          <label htmlFor="latitude">latitude*</label>
+          <input
+            onChange={handleLocationInput}
+            name="latitude"
+            type="text"
+            required
+          />
           <br />
           <br />
-          <label htmlFor="experienceType">experience type:</label>
+          <label htmlFor="experienceType">experience type*</label>
           <select
             onChange={handleTypeInput}
             id="experienceType"
             name="experienceType"
             value={newExperience.experienceType}
+            required
           >
             <option value="search">Search</option>
             <option value="hiking">hiking</option>
@@ -267,13 +293,14 @@ function SubmitExperience() {
           </select>
           <br />
           <br />
-          <label htmlFor="story">story:</label>
+          <label htmlFor="story">story*</label>
           <input
             name="text_body"
             onChange={handleFormInput}
             id="textInput"
             type="text"
             placeholder="Tell us your experience here..."
+            required
           />
           <br />
           <button className="formButton" type="submit">
