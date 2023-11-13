@@ -128,14 +128,41 @@ const getExperiencesByCountry = async (req, res) => {
 };
 
 const getExperiencesByCity = async (req, res) => {
-  const { country, city } = req.params;
+  const { city } = req.params;
   console.log("city :>> ", city);
 
   try {
-    const experienceByCity = await experienceModel.find({
-      "location.city": city,
-      "location.country": country,
-    });
+    // const experienceByCity = await experienceModel.find({
+    //   "location.city": city,
+    //   "location.country": country,
+    // });
+
+    const agg = [
+      {
+        $search: {
+          autocomplete: {
+            query: city,
+            path: "location.city",
+            fuzzy: {
+              maxEdits: 2,
+            },
+          },
+        },
+      },
+      { $limit: 5 },
+
+      {
+        $project: {
+          _id: 0,
+          city: 1,
+          title: 1,
+          photo: 1,
+          country: 1,
+        },
+      },
+    ];
+
+    const experienceByCity = await experienceModel.aggregate(agg);
 
     if (experienceByCity.length > 0) {
       res.status(200).json({
@@ -145,7 +172,7 @@ const getExperiencesByCity = async (req, res) => {
     } else {
       res.status(200).json({
         number: experienceByCity.length,
-        errorMessage: "OH NO! No such country/ city exists",
+        errorMessage: "OH NO! No such city exists",
       });
     }
   } catch (error) {
