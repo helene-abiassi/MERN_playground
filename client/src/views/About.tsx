@@ -1,7 +1,9 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 function About() {
+  const { user } = useContext(AuthContext);
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -25,9 +27,15 @@ function About() {
             labore cum excepturi animi, possimus quis doloremque, porro.
           </p>
           <br />
-          <Link className="nakdButton" to={"/experiences"}>
-            join our community
-          </Link>
+          {user ? (
+            <Link className="nakdButton" to={"/experiences"}>
+              view experiences
+            </Link>
+          ) : (
+            <Link className="nakdButton" to={"/signup"}>
+              join our community
+            </Link>
+          )}
         </div>
       </div>
     </div>
