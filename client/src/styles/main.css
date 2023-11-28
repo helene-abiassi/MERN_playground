@@ -34,7 +34,7 @@ p {
   background-size: cover;
   margin-top: 0;
   padding-top: 0%;
-  min-height: 120vh;
+  min-height: 110vh;
   position: relative;
   min-width: 100%;
   display: flex;
@@ -59,7 +59,7 @@ nav {
 }
 
 .mainLogo {
-  height: 3.5rem;
+  height: 4.5rem;
 }
 
 .loaderImage {
@@ -107,6 +107,7 @@ nav {
 
 a {
   text-decoration: none;
+  /* color: #efcb59 !important; */
 }
 
 a:hover {
@@ -114,7 +115,7 @@ a:hover {
 }
 
 .active {
-  color: #ff5f1f;
+  color: black !important;
 }
 
 button {
@@ -128,6 +129,11 @@ button {
   transition: border-color 0.25s;
 }
 
+button:hover {
+  background-color: black;
+  background: #d7c6ac;
+}
+
 footer {
   position: absolute;
   bottom: 0;
@@ -137,4 +143,13 @@ footer {
 
 Link {
   color: #1a1a1a !important;
+}
+
+.submitHeader {
+  display: flex;
+  flex-direction: row;
+}
+
+.submitHeader .backButton {
+  padding: 0em 0.8em !important;
 }
