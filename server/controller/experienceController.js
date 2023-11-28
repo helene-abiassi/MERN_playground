@@ -185,7 +185,7 @@ const getExperiencesByCity = async (req, res) => {
 };
 
 const submitExperience = async (req, res) => {
-  // const photosArray = JSON.parse(req.body.photo_body);
+  const photosArray = JSON.parse(req.body.photo_body);
   console.log("req.body :>> ", req.body);
 
   try {
@@ -206,7 +206,7 @@ const submitExperience = async (req, res) => {
           },
           experienceType: req.body.experienceType,
           text_body: req.body.text_body,
-          // photo_body: photosArray,
+          photo_body: photosArray,
         });
 
         const savedSubmission = await newSubmission.save();
