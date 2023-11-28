@@ -1,9 +1,15 @@
+import BackButton from "../components/BackButton";
 import SubmitExperience from "../components/SubmitExperience";
 
 function Submit() {
   return (
     <div>
-      <h1>submit your story</h1>
+      <div className="submitHeader">
+        <div className="backButton">
+          <BackButton />
+        </div>
+        <h1>submit your story</h1>
+      </div>
       <SubmitExperience />
     </div>
   );
