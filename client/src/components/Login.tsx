@@ -33,10 +33,12 @@ function Login() {
     if (passwordType === "password") {
       setPasswordType("text");
       setShowOrHide("hide");
+      console.log("hide button pressed");
       return;
     }
     setPasswordType("password");
     setShowOrHide("show");
+    console.log("show button pressed");
   };
 
   const navigateTo = useNavigate();
@@ -79,6 +81,7 @@ function Login() {
         console.log("result of Email Find :>> ", result);
 
         if (result.data.length > 0) {
+          console.log("login works");
           logIn();
           navigateTo("/profile");
         } else {
@@ -90,8 +93,6 @@ function Login() {
       }
     }
   };
-
-  // const isUserLoggedIn = () => {
 
   useEffect(() => {}, [isLoggedIn, user]);
 
@@ -130,13 +131,6 @@ function Login() {
                 type={passwordType}
                 required
               />
-              <button
-                onClick={changePasswordType}
-                className="hide-password formButton"
-                style={{ cursor: "pointer" }}
-              >
-                {showOrHide}
-              </button>
             </div>
           </div>
           <br />
@@ -144,6 +138,13 @@ function Login() {
             log in
           </button>
         </form>
+        <button
+          onClick={changePasswordType}
+          className="hide-password formButton"
+          style={{ cursor: "pointer" }}
+        >
+          {showOrHide}
+        </button>
         <p>
           Don't have an account yet?
           <Link to={"/signup"} style={{ color: "black" }}>
