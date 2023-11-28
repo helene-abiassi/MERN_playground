@@ -10,7 +10,7 @@ function SubmitExperience() {
   const [displayPhoto, setDisplayPhoto] = useState<File | string>("");
   const [photoAlbum, setPhotoAlbum] = useState<File[] | string[]>([]);
 
-  const { user, isLoggedIn, authenticateUser } = useContext(AuthContext);
+  const { user, isLoggedIn } = useContext(AuthContext);
   console.log("user on my Submit page :>> ", user);
 
   const [newExperience, setNewExperience] = useState<Experience>({
@@ -37,6 +37,7 @@ function SubmitExperience() {
     text_body: "",
     photo_body: [""],
     comments: [],
+    bookmarked_by: [],
   });
 
   const navigateTo = useNavigate();
@@ -181,29 +182,8 @@ function SubmitExperience() {
     console.log("newExperience :>> ", newExperience);
   };
 
-  // //? ///////
-  // //? ///////
-  // //? geoLocation
-  // const [location, setLocation] = useState([]);
-  // const geoLocation = () => {
-  //   if (navigator.geolocation) {
-  //     navigator.geolocation.getCurrentPosition(showPosition);
-  //   } else {
-  //     alert("Cannot display location");
-  //   }
-  // };
-  // function showPosition(position) {
-  //   console.log("position :>> ", position);
-  //   const { longitude, latitude } = position.coords;
-  //   const positionArray = [latitude, longitude];
-  //   console.log("positionArray :>> ", positionArray);
-  //   setLocation(positionArray);
-  // }
-
   useEffect(() => {
     setNewExperience(newExperience);
-    console.log("newExperience :>> ", newExperience);
-    // geoLocation();
   }, [isLoggedIn]);
 
   return (
@@ -212,7 +192,9 @@ function SubmitExperience() {
         <form onSubmit={handleDisplayPhotoSubmit}>
           photo*
           <input onChange={handlePhotoInput} name="photo" type="file" />
-          <button type="submit">upload</button>
+          <button className="nakdButton" type="submit">
+            upload
+          </button>
         </form>
         <br />
         <form onSubmit={handlePhotoAlbumSubmit}>
@@ -223,8 +205,10 @@ function SubmitExperience() {
             name="photo_body"
             type="file"
           />
-          <button type="submit">upload</button>
-          <figcaption>{"{you can upload up to 4 photos}"}</figcaption>
+          <button className="nakdButton" type="submit">
+            upload
+          </button>
+          <p>{"{you can upload up to 4 photos}"}</p>
         </form>
         <br />
         <form onSubmit={handleSubmitExperience}>
@@ -290,6 +274,7 @@ function SubmitExperience() {
             <option value="hiking">hiking</option>
             <option value="faunaflora">fauna & flora</option>
             <option value="wildlife">wildlife</option>
+            <option value="citywalk">citywalk</option>
           </select>
           <br />
           <br />
@@ -302,6 +287,7 @@ function SubmitExperience() {
             placeholder="Tell us your experience here..."
             required
           />
+          <br />
           <br />
           <button className="formButton" type="submit">
             submit
