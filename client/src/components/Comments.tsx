@@ -3,6 +3,7 @@ import { CommentsType } from "../types/customTypes";
 import { AuthContext } from "../context/AuthContext";
 import { formatDateAndTime } from "./Functions";
 import { ExperiencesContext } from "../context/ExperiencesContext";
+import "../styles/Comments.css";
 
 type CommentsProps = {
   comments: CommentsType[];
@@ -13,7 +14,6 @@ function Comments({ comments, _id }: CommentsProps) {
   const { user } = useContext(AuthContext);
   const { experiences, fetchExperiences } = useContext(ExperiencesContext);
   const experienceID = _id;
-  // console.log("experienceID on commentsComp:>> ", experienceID);
 
   console.log("user :>> ", user);
   console.log("experiences in COMMENTS:>> ", experiences);
@@ -153,45 +153,48 @@ function Comments({ comments, _id }: CommentsProps) {
   }, [user, experienceID]);
 
   return (
-    <div>
+    <div className="commentsSection">
       <h2>comments:</h2>
       <form onSubmit={handleSubmitComment}>
-        <div className="inputContainer">
-          <input
-            name="message"
-            type="text"
-            placeholder="Leave a comment..."
-            onChange={handleNewComments}
-            value={textInput}
-          />
-          <button
-            style={{ backgroundColor: "white" }}
-            className="nakdButton"
-            type="submit"
-          >
-            submit
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="25"
-              height="25"
-              viewBox="0 0 25 25"
-              fill="none"
+        <div className="inputContainer commentHeader">
+          <div className="newComment">
+            <input
+              name="message"
+              type="text"
+              className="commentInput"
+              placeholder="Leave a comment..."
+              onChange={handleNewComments}
+              value={textInput}
+            />
+            <button
+              style={{ backgroundColor: "white" }}
+              className="nakdButton"
+              type="submit"
             >
-              <path
-                d="M2.08337 21.875L23.9584 12.5L2.08337 3.125V10.4167L17.7084 12.5L2.08337 14.5833V21.875Z"
-                fill="#EFCB59"
-              />
-            </svg>
-          </button>
+              submit{" "}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="25"
+                height="25"
+                viewBox="0 0 25 25"
+                fill="none"
+              >
+                <path
+                  d="M2.08337 21.875L23.9584 12.5L2.08337 3.125V10.4167L17.7084 12.5L2.08337 14.5833V21.875Z"
+                  fill="#EFCB59"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </form>
-
+      <br />
       <div style={{ backgroundColor: "white" }}>
         <div>
           {experiences && experiences.length > 0 ? (
             experiences.map((experience) => {
               return (
-                <div key={experience._id}>
+                <div className="singleComment" key={experience._id}>
                   {experience._id === experienceID &&
                     experience.comments
                       ?.slice()
@@ -199,31 +202,46 @@ function Comments({ comments, _id }: CommentsProps) {
                       .map((comment) => {
                         return (
                           <div key={comment._id}>
-                            {comment.author && (
-                              <>
-                                <img
-                                  style={{
-                                    width: "7%",
-                                    borderRadius: "50%",
+                            <div className="singleCommentHeader">
+                              {comment.author && (
+                                <>
+                                  <img
+                                    style={{
+                                      width: "7%",
+                                      borderRadius: "50%",
+                                    }}
+                                    src={comment.author.user_image}
+                                    alt={comment.author.username}
+                                  />
+                                  <p>{comment.author.username}</p>
+                                </>
+                              )}
+                              <p>{formatDateAndTime(comment.date)}</p>
+                            </div>
+                            <div className="commentBody">
+                              <p className="commentMsg">{comment.message}</p>
+                              {user && user.email === comment.author?.email && (
+                                <button
+                                  className="deleteIcon"
+                                  onClick={() => {
+                                    handleDeleteComment(comment._id);
                                   }}
-                                  src={comment.author.user_image}
-                                  alt={comment.author.username}
-                                />
-                                <p>{comment.author.username}</p>
-                                <p>{comment.author.user_image}</p>
-                              </>
-                            )}
-                            <p>{formatDateAndTime(comment.date)}</p>
-                            <p>{comment.message}</p>
-                            {user && user.email === comment.author?.email && (
-                              <button
-                                onClick={() => {
-                                  handleDeleteComment(comment._id);
-                                }}
-                              >
-                                Delete
-                              </button>
-                            )}
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="25"
+                                    height="25"
+                                    viewBox="0 0 25 25"
+                                    fill="none"
+                                  >
+                                    <path
+                                      d="M9.37496 3.125V4.16667H4.16663V6.25H5.20829V19.7917C5.20829 20.3442 5.42779 20.8741 5.81849 21.2648C6.20919 21.6555 6.73909 21.875 7.29163 21.875H17.7083C18.2608 21.875 18.7907 21.6555 19.1814 21.2648C19.5721 20.8741 19.7916 20.3442 19.7916 19.7917V6.25H20.8333V4.16667H15.625V3.125H9.37496ZM7.29163 6.25H17.7083V19.7917H7.29163V6.25ZM9.37496 8.33333V17.7083H11.4583V8.33333H9.37496ZM13.5416 8.33333V17.7083H15.625V8.33333H13.5416Z"
+                                      fill="black"
+                                    />
+                                  </svg>
+                                </button>
+                              )}
+                            </div>
                           </div>
                         );
                       })}
