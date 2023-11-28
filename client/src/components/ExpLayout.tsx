@@ -4,9 +4,11 @@ import ExpCards from "./ExpCard";
 import { ExperiencesContext } from "../context/ExperiencesContext";
 import Loader from "./Loader";
 import SearchBox from "./SearchBox";
+import { AuthContext } from "../context/AuthContext";
 
 function ExpLayout() {
   const { experiences, fetchExperiences } = useContext(ExperiencesContext);
+  const { isLoading } = useContext(AuthContext);
   const [filteredExperiences, setFilteredExperiences] = useState(experiences);
 
   const handleCitySearch = (city: string) => {
@@ -74,26 +76,34 @@ function ExpLayout() {
 
   return (
     <div className="mainBodyExp">
-      <h1>experiences</h1>
-      <nav className="expTypeNavbar">
-        <NavLink to={"all"}>all</NavLink> <span> | </span>
-        <NavLink to={"hiking"}>hiking</NavLink> <span> | </span>
-        <NavLink to={"wildlife"}>wildlife</NavLink> <span> | </span>
+      {/* <h1>experiences</h1> */}
+      <br />
+      <div className="logoSearchbar">
+        <img
+          style={{ width: "7%" }}
+          src="https://res.cloudinary.com/dfm1r4ikr/image/upload/v1697317643/voyageApp/logo-variations-02_uffxcy.png"
+          alt=""
+        />
+      </div>
+      <SearchBox
+        onCriteriaSearch={handleCriteriaSearch}
+        onCitySearch={handleCitySearch}
+      />
+      <div className="expTypeNavbar">
+        <NavLink to={"all"}>all </NavLink> <span> | </span>
+        <NavLink to={"hiking"}> hiking </NavLink> <span> | </span>
+        <NavLink to={"wildlife"}> wildlife</NavLink> <span> | </span>
         <NavLink to={"roadtrips"}>roadtrips</NavLink> <span> | </span>
         <NavLink to={"citywalks"}>city walks</NavLink>
         <span> | </span>
         <NavLink to={"wildlife"}>scenery</NavLink>
         <span> | </span>
         <NavLink to={"wildlife"}>fauna & flora</NavLink>
-      </nav>
-      {/* <br /> */}
+      </div>
+      <br />
       <Outlet />
       <div>
-        <SearchBox
-          onCriteriaSearch={handleCriteriaSearch}
-          onCitySearch={handleCitySearch}
-        />
-        <div>
+        <div className="storyCards">
           {filteredExperiences && filteredExperiences.length > 0 ? (
             filteredExperiences.map((experience, expID) => (
               <div key={expID}>
@@ -119,31 +129,11 @@ function ExpLayout() {
                   />
                 </div>
               ))
+          ) : isLoading ? (
+            <Loader />
           ) : (
             <h2>...something went wrong...</h2>
           )}
-
-          {/* {experiences ? (
-            experiences
-              .slice()
-              .sort(
-                (a, b) =>
-                  new Date(b.publication_date).getTime() -
-                  new Date(a.publication_date).getTime()
-              )
-              .map((experience, expID) => {
-                return (
-                  <div key={expID}>
-                    <ExpCards
-                      key={"1" + experience.publication_date}
-                      experience={experience}
-                    />
-                  </div>
-                );
-              })
-          ) : (
-            <h2>...something went wrong...</h2>
-          )} */}
         </div>
       </div>
     </div>
