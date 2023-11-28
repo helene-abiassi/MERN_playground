@@ -1,5 +1,7 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import "../styles/SearchBox.css";
+import { Link } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 export interface SearchBoxProps {
   onCriteriaSearch: (criteria: string) => void;
@@ -10,6 +12,8 @@ function SearchBox({ onCriteriaSearch, onCitySearch }: SearchBoxProps) {
   const [searchCriteria, setSearchCriteria] = useState("");
   const [searchCity, setSearchCity] = useState("");
   const [searchCityInput, setSearchCityInput] = useState("");
+
+  const { user } = useContext(AuthContext);
 
   const handleCriteriaChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const criteria = e.target.value;
@@ -33,7 +37,7 @@ function SearchBox({ onCriteriaSearch, onCitySearch }: SearchBoxProps) {
   };
 
   const resetFilters = () => {
-    setSearchCriteria("");
+    // setSearchCriteria("");
     setSearchCity("");
     setSearchCityInput("");
     onCriteriaSearch("");
@@ -44,32 +48,56 @@ function SearchBox({ onCriteriaSearch, onCitySearch }: SearchBoxProps) {
     // onCriteriaSearch("")
     // handleSearchClick();
   }, [searchCityInput]);
+
   return (
     <div className="mainSearchBox">
       <div className="searchBox">
-        <div className="searchByCombo">
-          <div className="searchByIngBox">
-            <input
-              type="text"
-              placeholder="Search by city..."
-              value={searchCityInput}
-              onChange={handleCityChange}
-            />
-          </div>
-          <select onChange={handleCriteriaChange}>
+        <div className="searchRow">
+          <select className="dropdownSearch" onChange={handleCriteriaChange}>
             <option value={""}>Sort By</option>
             <option value={"Most Bookmarked"}>Most Bookmarked</option>
             <option value={"Newest"}>Newest</option>
             <option value={"Oldest"}>Oldest</option>
             <option value={"Most Commented"}>Most Commented</option>
-          </select>
-          <button className="searchButton" onClick={handleSearchClick}>
-            Search
-          </button>
-          <button className="resetButton" onClick={resetFilters}>
-            Reset
-          </button>
+          </select>{" "}
+          {user ? (
+            <Link to={"/submit"} style={{ color: "black", fontSize: "18px" }}>
+              {" "}
+              <strong style={{ fontSize: "18px" }}>+</strong> Add your own
+            </Link>
+          ) : (
+            <button
+              style={{ backgroundColor: "transparent" }}
+              onClick={() => {
+                alert("You need to log in first!");
+              }}
+            >
+              {" "}
+              <p style={{ fontSize: "18px", backgroundColor: "transparent" }}>
+                <strong>+</strong> Add your own
+              </p>
+            </button>
+          )}
         </div>
+        <div className="">
+          <div className="">
+            <input
+              className="searchInputBox"
+              type="text"
+              placeholder="Search by city..."
+              value={searchCityInput}
+              onChange={handleCityChange}
+            />
+
+            <button className="nakdButton" onClick={handleSearchClick}>
+              Search
+            </button>
+          </div>
+        </div>
+
+        <button className="resetButton" onClick={resetFilters}>
+          Reset
+        </button>
       </div>
     </div>
   );
