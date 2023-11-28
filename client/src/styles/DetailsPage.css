@@ -10,9 +10,11 @@
 .textBox {
   border-radius: 10px;
   background: #d7c6ac;
-  width: auto;
+  width: 805px;
   margin-top: -10px;
+  align-items: center;
   padding: 10px;
+  text-align: left;
 }
 
 p {
@@ -21,4 +23,9 @@ p {
 
 hr {
   color: black;
+}
+
+.photoAlbum {
+  display: flex;
+  flex-direction: row;
 }
