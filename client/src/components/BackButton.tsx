@@ -4,7 +4,7 @@ function BackButton() {
   const NavigateTo = useNavigate();
 
   const goBack = () => {
-    NavigateTo("/experiences", { replace: true });
+    NavigateTo(-1);
   };
 
   return (
