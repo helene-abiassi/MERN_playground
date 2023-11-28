@@ -44,10 +44,12 @@ function Signup() {
     if (passwordType === "password") {
       setPasswordType("text");
       setShowOrHide("hide");
+      console.log("hide console log :>> ");
       return;
     }
     setPasswordType("password");
     setShowOrHide("show");
+    console.log("show console log :>> ");
   };
 
   const navigateTo = useNavigate();
@@ -203,13 +205,7 @@ function Signup() {
                 type={passwordType}
                 required
               />
-              <button
-                onClick={changePasswordType}
-                className="hide-password formButton"
-                style={{ cursor: "pointer" }}
-              >
-                {showOrHide}
-              </button>
+
               <label htmlFor="bio">Tell us a little bit about yourself</label>
               <input
                 onChange={handleRegisterInput}
@@ -225,6 +221,13 @@ function Signup() {
             sign up
           </button>
         </form>
+        <button
+          onClick={changePasswordType}
+          className="hide-password formButton"
+          style={{ cursor: "pointer" }}
+        >
+          {showOrHide}
+        </button>
         <p>
           Already have an account?
           <Link to={"/login"} style={{ color: "black" }}>
