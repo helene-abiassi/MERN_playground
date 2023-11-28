@@ -1,6 +1,7 @@
 import { ReactNode, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import Loader from "./Loader";
+import { Link } from "react-router-dom";
 // import { isUserAuth } from "../utilities/isUserAuth.js";
 // import { useIsAuth } from "../hooks/useIsAuth.js";
 
@@ -18,7 +19,9 @@ function ProtectedRoute({ children }: ProtectedRouteProp) {
       ) : user ? (
         children
       ) : (
-        <h1>not allowed here</h1> // add button to redirect
+        <div>
+          <h1>not allowed here</h1> <Link to={"/"}>Go back home</Link>
+        </div>
       )}
     </>
   );
