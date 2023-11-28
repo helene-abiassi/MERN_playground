@@ -13,7 +13,7 @@ export interface User extends UserImage {
     email: string;
     password: string;
     bio: string;
-    member_since: Date;
+    member_since: Date  | string;
     bookmarks: ExpDetails[];
     submissions: ExpDetails[];
   }
@@ -26,7 +26,7 @@ export interface User extends UserImage {
       user_image:string,
     },
     title: string;
-    publication_date: Date;
+    publication_date: Date  | string;
     photo: string;
   }
   
@@ -56,16 +56,18 @@ export interface User extends UserImage {
     };
     experienceType: string;
     text_body: string;
-    bookmarked_by:[{
-      _id:string,
-      username:string,
-      bio:string,
-      member_since:Date | string,
-      user_image:string
-    }];
+    bookmarked_by:Bookmarks[];
     comments:CommentsType[] | null
 
 
+  }
+
+  export interface Bookmarks {
+    _id:string,
+    username:string,
+    bio:string,
+    member_since:Date | string,
+    user_image:string
   }
   
   export interface ExperienceImage {
