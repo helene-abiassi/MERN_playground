@@ -22,6 +22,7 @@ function ProtectedRoute({ children }: ProtectedRouteProp) {
         <div>
           <h1>not allowed here</h1> <Link to={"/"}>Go back home</Link>
         </div>
+        // add button to redirect
       )}
     </>
   );
