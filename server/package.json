@@ -15,9 +15,9 @@
   "author": "Helene Abi Assi",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/helene-abiassi/onlyInBerlin/issues"
+        "url": "git+https://github.com/helene-abiassi/voyage_MERN.git"
   },
-  "homepage": "https://github.com/helene-abiassi/onlyInBerlin#readme",
+  "homepage": "https://github.com/helene-abiassi/voyage_MERN#readme",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cloudinary": "^1.41.0",
