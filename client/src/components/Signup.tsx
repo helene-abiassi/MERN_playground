@@ -76,7 +76,6 @@ function Signup() {
       );
       const result = (await response.json()) as UserImage;
 
-      //Get url from profile picture
       setNewUser({ ...newUser, user_image: result.user_image });
     } catch (error) {
       console.log("error :>> ", error);
