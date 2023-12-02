@@ -40,6 +40,7 @@ const addRoutes = () => {
   app.use("/api/experiences", experienceRoutes);
   app.use("/api/users", userRoutes);
   app.use("/api/comments", commentRoutes);
+  app.use("/api/test", commentRoutes);
 };
 
 //CRUD Create Read Update Delete
@@ -47,7 +48,7 @@ const addRoutes = () => {
 const DBConnection = async () => {
   try {
     await mongoose.connect(process.env.DB);
-    console.log("connection to MongoDB :>>".bgCyan);
+    // console.log("connection to MongoDB :>>".bgCyan);
   } catch (error) {
     console.log("error in connection to MongoDB".bgMagenta, error);
   }
