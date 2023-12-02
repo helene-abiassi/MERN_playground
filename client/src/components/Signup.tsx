@@ -1,79 +1,68 @@
-import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
-import { Experience, ExperienceImage } from "../types/customTypes";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import "../styles/logUp.css";
 import "../styles/Home.css";
-import "../styles/Experiences.css";
-import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
-// import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import { Link, useNavigate } from "react-router-dom";
+import { User, UserImage } from "../types/customTypes";
 
-function SubmitExperience() {
-  const [displayPhoto, setDisplayPhoto] = useState<File | string>("");
-  const [photoAlbum, setPhotoAlbum] = useState<File[] | string[]>([]);
-
-  const { user, isLoggedIn } = useContext(AuthContext);
-  console.log("user on my Submit page :>> ", user);
-
-  const [newExperience, setNewExperience] = useState<Experience>({
+function Signup() {
+  const [selectedFile, setSelectedFile] = useState<File | string>("");
+  const [newUser, setNewUser] = useState<User>({
     _id: "",
-    author: {
-      a_id: "",
-      username: "",
-      email: "",
-      bio: "",
-      member_since: Date(),
-      user_image: "",
-    },
-    title: "",
-    caption: "",
-    publication_date: new Date(),
-    photo: "",
-    location: {
-      country: "",
-      city: "",
-      longitude: "",
-      latitude: "",
-    },
-    experienceType: "",
-    text_body: "",
-    photo_body: [""],
-    comments: [],
-    bookmarked_by: [],
+    username: "",
+    email: "",
+    password: "",
+    user_image:
+      "https://res.cloudinary.com/dfm1r4ikr/image/upload/v1697397728/voyageApp/userPhoto.png",
+    bio: "",
+    member_since: new Date(),
+    bookmarks: [
+      {
+        _id: "",
+        author: {
+          _id: "",
+          username: "",
+          user_image: "",
+        },
+        title: "",
+        publication_date: Date(),
+        photo: "",
+      },
+    ],
+    submissions: [
+      {
+        id: "",
+        author: "",
+        title: "",
+        publication_date: Date(),
+        photo: "",
+      },
+    ],
   });
+  const [passwordType, setPasswordType] = useState("password");
+  const [showOrHide, setShowOrHide] = useState("show");
+  const changePasswordType = () => {
+    if (passwordType === "password") {
+      setPasswordType("text");
+      setShowOrHide("hide");
+      console.log("hide console log :>> ");
+      return;
+    }
+    setPasswordType("password");
+    setShowOrHide("show");
+    console.log("show console log :>> ");
+  };
 
   const navigateTo = useNavigate();
 
-  const handleFormInput = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setNewExperience({ ...newExperience, [name]: value });
+  const handleFileInput = (e: ChangeEvent<HTMLInputElement>) => {
+    setSelectedFile(e.target.files?.[0] || "");
   };
 
-  const handleLocationInput = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setNewExperience({
-      ...newExperience,
-      location: {
-        ...newExperience.location,
-        [name]: value,
-      },
-    });
-  };
-
-  const handleTypeInput = (e: ChangeEvent<HTMLSelectElement>) => {
-    console.log("e.target.value :>> ", e.target.value);
-    setNewExperience({ ...newExperience, experienceType: e.target.value });
-  };
-
-  const handlePhotoInput = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log("e :>> ", e);
-    setDisplayPhoto(e.target.files?.[0] || "");
-  };
-
-  const handleDisplayPhotoSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleFileSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formdata = new FormData();
-    formdata.append("photo", displayPhoto);
-    console.log("formdata :>> ", formdata);
+    formdata.append("user_image", selectedFile);
 
     const requestOptions = {
       method: "POST",
@@ -82,84 +71,54 @@ function SubmitExperience() {
 
     try {
       const response = await fetch(
-        "http://localhost:5005/api/experiences/mainphotoupload",
+        "http://localhost:5005/api/users/imageUpload",
         requestOptions
       );
-      const result = (await response.json()) as ExperienceImage;
-      console.log("result single photo:>> ", result);
+      const result = (await response.json()) as UserImage;
 
-      setNewExperience({ ...newExperience, photo: result.photo });
+      //Get url from profile picture
+      setNewUser({ ...newUser, user_image: result.user_image });
     } catch (error) {
       console.log("error :>> ", error);
     }
   };
 
-  const handlePhotoAlbumInput = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      const photoArray: File[] = [];
-      for (let i = 0; i < files.length; i++) {
-        photoArray.push(files[i]);
-      }
-      console.log("photoArray :>> ", photoArray);
-      setPhotoAlbum(photoArray);
-    }
+  const handleRegisterInput = (e: ChangeEvent<HTMLInputElement>) => {
+    console.log("e.target.name :>> ", e.target.name);
+    setNewUser({ ...newUser, [e.target.name]: e.target.value });
   };
 
-  const handlePhotoAlbumSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmitRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formdata = new FormData();
-    for (let i = 0; i < photoAlbum.length; i++) {
-      formdata.append("photo_body", photoAlbum[i]);
-    }
 
-    console.log("formdata :>> ", formdata);
-    const requestOptions = {
-      method: "POST",
-      body: formdata,
-    };
+    const { email, password, username } = newUser;
 
-    try {
-      const response = await fetch(
-        "http://localhost:5005/api/experiences/photoalbumupload",
-        requestOptions
+    if (username.trim() === "") {
+      alert("Username cannot be empty");
+      return;
+    } else if (!email.includes("@") && password.length < 6) {
+      alert(
+        "Your email seems to be invalid. \n Your password should be at least 6 characters"
       );
-
-      const result = await response.json();
-      console.log("result album photo:>> ", result);
-      console.log("result.photo_urls :>> ", result.photo_urls);
-      setNewExperience({ ...newExperience, photo_body: result.photo_urls });
-    } catch (error) {
-      console.log("error :>> ", error);
-    }
-  };
-
-  const handleSubmitExperience = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!isLoggedIn) {
-      console.error("You need to log in first");
+      return;
+    } else if (password.length < 6) {
+      alert("Your password should be at least 6 characters");
+      return;
+    } else if (!email.includes("@")) {
+      alert("Your email seems to be invalid");
       return;
     }
 
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
 
-    const photoBodyJSON = JSON.stringify(newExperience.photo_body);
-
     const urlencoded = new URLSearchParams();
-    // urlencoded.append("a_id", newExperience.author.a_id);
-    urlencoded.append("email", user!.email);
-    urlencoded.append("title", newExperience.title);
-    urlencoded.append("caption", newExperience.caption);
-    urlencoded.append("photo", newExperience.photo);
-    urlencoded.append("country", newExperience.location.country);
-    urlencoded.append("city", newExperience.location.city);
-    urlencoded.append("longitude", newExperience.location.latitude);
-    urlencoded.append("latitude", newExperience.location.longitude);
-    urlencoded.append("experienceType", newExperience.experienceType);
-    urlencoded.append("text_body", newExperience.text_body);
-    urlencoded.append("photo_body", photoBodyJSON);
+    urlencoded.append("_id", newUser._id);
+    urlencoded.append("username", newUser.username);
+    urlencoded.append("email", newUser.email);
+    urlencoded.append("password", newUser.password);
+    urlencoded.append("user_image", newUser.user_image);
+    urlencoded.append("bio", newUser.bio);
 
     const requestOptions = {
       method: "POST",
@@ -169,160 +128,116 @@ function SubmitExperience() {
 
     try {
       const response = await fetch(
-        "http://localhost:5005/api/experiences/experiencesubmission",
+        "http://localhost:5005/api/users/signup",
         requestOptions
       );
-      const results = await response.json();
-      console.log("results :>> ", results);
+      const result = await response.json();
+      console.log("result after Signup :>> ", result);
+      alert("Congrats!");
+      navigateTo("/login");
     } catch (error) {
       console.log("error :>> ", error);
     }
-    alert("experience posted!!");
-    navigateTo("/experiences");
-    console.log("newExperience :>> ", newExperience);
   };
 
   useEffect(() => {
-    setNewExperience(newExperience);
-  }, [isLoggedIn]);
+    setNewUser(newUser);
+  }, []);
 
   return (
-    <div>
-      <div className="inputColorBox">
-        <form onSubmit={handleDisplayPhotoSubmit}>
-          photo*
-          <input onChange={handlePhotoInput} name="photo" type="file" />
-          <button className="nakdButton" type="submit">
-            upload
-          </button>
-        </form>
+    <>
+      <div className="LogUpColorBox">
+        <div className="photoLine">
+          <div>
+            <form className="photoForm" onSubmit={handleFileSubmit}>
+              <input onChange={handleFileInput} name="user_image" type="file" />
+              <button className="formButton uploadButton" type="submit">
+                upload
+              </button>
+            </form>
+          </div>
+
+          <img
+            style={{
+              width: "16%",
+              height: "16%",
+              marginLeft: "70px",
+              borderRadius: "50%",
+            }}
+            src={newUser.user_image}
+            alt=""
+          />
+        </div>
         <br />
-        <form onSubmit={handlePhotoAlbumSubmit}>
-          photo album
-          <input
-            onChange={handlePhotoAlbumInput}
-            multiple
-            name="photo_body"
-            type="file"
-          />
+        <form className="infoForm" onSubmit={handleSubmitRegister}>
+          <div className="inputContainer">
+            <label htmlFor="username">username*</label>
+            <input
+              placeholder="choose username..."
+              onChange={handleRegisterInput}
+              name="username"
+              type="text"
+              style={{ maxWidth: "200px" }}
+              required
+            />
+          </div>
+          <br />
+
+          <div className="pswEmailBox">
+            <div className="inputContainer">
+              <label htmlFor="email">e-mail*</label>
+              <input
+                placeholder="enter e-mail..."
+                onChange={handleRegisterInput}
+                name="email"
+                type="text"
+                required
+              />
+              <p>* required</p>
+            </div>
+            <br />
+            <div className="inputContainer">
+              <label htmlFor="password">password*</label>
+              <input
+                onChange={handleRegisterInput}
+                name="password"
+                placeholder="enter password..."
+                type={passwordType}
+                required
+              />
+
+              <label htmlFor="bio">Tell us a little bit about yourself</label>
+              <input
+                onChange={handleRegisterInput}
+                name="bio"
+                type="text"
+                maxLength={250}
+              />
+              <p>include letter counter</p>
+            </div>
+          </div>
+          <br />
           <button className="nakdButton" type="submit">
-            upload
-          </button>
-          <p>{"{you can upload up to 4 photos}"}</p>
-        </form>
-        <br />
-        <form onSubmit={handleSubmitExperience}>
-          <br />
-          <label htmlFor="title">title*</label>
-          <input onChange={handleFormInput} name="title" type="text" required />
-          <br />
-          <br />
-          <label htmlFor="caption">caption*</label>
-          <input
-            onChange={handleFormInput}
-            name="caption"
-            type="text"
-            required
-          />
-          <br />
-          <br />
-          <label htmlFor="country">country*</label>
-          <input
-            onChange={handleLocationInput}
-            name="country"
-            type="text"
-            required
-          />
-          <br />
-          <br />
-          <label htmlFor="city">city*</label>
-          <input
-            onChange={handleLocationInput}
-            name="city"
-            type="text"
-            required
-          />
-          <br />
-          <br />
-          <label htmlFor="longitude">longitude*</label>
-          <input
-            onChange={handleLocationInput}
-            name="longitude"
-            type="text"
-            required
-          />
-          <br />
-          <br />
-          <label htmlFor="latitude">latitude*</label>
-          <input
-            onChange={handleLocationInput}
-            name="latitude"
-            type="text"
-            required
-          />
-          <br />
-          <br />
-          <label htmlFor="experienceType">experience type*</label>
-          <select
-            onChange={handleTypeInput}
-            id="experienceType"
-            name="experienceType"
-            value={newExperience.experienceType}
-            required
-          >
-            <option value="search">Search</option>
-            <option value="hiking">hiking</option>
-            <option value="faunaflora">fauna & flora</option>
-            <option value="wildlife">wildlife</option>
-            <option value="citywalk">citywalk</option>
-          </select>
-          <br />
-          <br />
-          <label htmlFor="story">story*</label>
-          <input
-            name="text_body"
-            onChange={handleFormInput}
-            id="textInput"
-            type="text"
-            placeholder="Tell us your experience here..."
-            required
-          />
-          <br />
-          <br />
-          <button className="formButton" type="submit">
-            submit
+            sign up
           </button>
         </form>
+        <button
+          onClick={changePasswordType}
+          className="hide-password formButton"
+          style={{ cursor: "pointer" }}
+        >
+          {showOrHide}
+        </button>
+        <p>
+          Already have an account?
+          <Link to={"/login"} style={{ color: "black" }}>
+            {" "}
+            log in.
+          </Link>
+        </p>
       </div>
-    </div>
+    </>
   );
 }
 
-export default SubmitExperience;
-
-{
-  /* <MapContainer center={location} zoom={13} scrollWheelZoom={true}>
-<TileLayer
-  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-/>
-{/* //RAULNOTE - poor attempt of creating markers dynamically */
-}
-{
-  /* experiences.map((experience) => {
-  return (
-    <Marker position={[experience.location.latitude, experience.location.longitude]}></Marker>
-  )
-}) */
-}
-{
-  /* <Marker position={location}> */
-}
-{
-  /* Map through marker to show pins of all locations  */
-}
-// <Popup>
-// A pretty CSS3 popup. <br /> Easily customizable.
-// </Popup>
-// </Marker>
-// </MapContainer> */}
+export default Signup;
