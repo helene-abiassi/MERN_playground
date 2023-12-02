@@ -300,29 +300,3 @@ function SubmitExperience() {
 
 export default SubmitExperience;
 
-{
-  /* <MapContainer center={location} zoom={13} scrollWheelZoom={true}>
-<TileLayer
-  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-/>
-{/* //RAULNOTE - poor attempt of creating markers dynamically */
-}
-{
-  /* experiences.map((experience) => {
-  return (
-    <Marker position={[experience.location.latitude, experience.location.longitude]}></Marker>
-  )
-}) */
-}
-{
-  /* <Marker position={location}> */
-}
-{
-  /* Map through marker to show pins of all locations  */
-}
-// <Popup>
-// A pretty CSS3 popup. <br /> Easily customizable.
-// </Popup>
-// </Marker>
-// </MapContainer> */}
